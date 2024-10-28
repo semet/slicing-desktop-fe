@@ -4,6 +4,6 @@ import { AccountInfo } from './account-info'
 import { Authentication } from './authentication'
 
 export const HeaderCenterRight = () => {
-  const [isLogin] = useState<boolean>(true)
+  const [isLogin] = useState<boolean>(false)
   return <div>{!isLogin ? <Authentication /> : <AccountInfo />}</div>
 }

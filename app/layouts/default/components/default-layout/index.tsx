@@ -11,12 +11,12 @@ import {
   HeaderTop,
   useActiveStyle
 } from '@/layouts/default'
-import makeStyle from '@/libs/make-style'
+import extractStyle from '@/libs/make-style'
 
 export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
   const { data } = useActiveStyle()
 
-  const style = makeStyle(data.data).get('desktop_homepage_body')
+  const style = extractStyle(data.data).get('desktop_homepage_body')
   return (
     <main
       className="h-full max-w-full bg-cover bg-fixed bg-center bg-no-repeat"

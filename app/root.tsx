@@ -7,10 +7,14 @@ import {
   ScrollRestoration,
   useRouteError
 } from '@remix-run/react'
-import { QueryClientProvider } from '@tanstack/react-query'
 import './tailwind.css'
-
-import queryClient from './libs/query-client'
+import {
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query'
+import { useState } from 'react'
+import { useDehydratedState } from 'use-dehydrated-state'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -29,7 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className="scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-700"
+      className="scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-600"
     >
       <head>
         <meta charSet="utf-8" />
@@ -50,9 +54,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000
+          }
+        }
+      })
+  )
+
+  const dehydratedState = useDehydratedState()
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <HydrationBoundary state={dehydratedState}>
+        <Outlet />
+      </HydrationBoundary>
     </QueryClientProvider>
   )
 }

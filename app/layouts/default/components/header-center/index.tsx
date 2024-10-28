@@ -3,13 +3,13 @@ import {
   HeaderCenterRight,
   useActiveStyle
 } from '@/layouts/default'
-import makeStyle from '@/libs/make-style'
+import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
 
 export const HeaderCenter = () => {
   const { data } = useActiveStyle()
 
-  const style = makeStyle(data.data).get('desktop_homepage_header')
+  const style = extractStyle(data.data).get('desktop_homepage_header')
   return (
     <div
       style={

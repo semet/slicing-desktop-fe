@@ -2,7 +2,7 @@
 import { Fragment, useState } from 'react'
 
 import { useActiveStyle } from '@/layouts/default'
-import makeStyle from '@/libs/make-style'
+import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
 
 import { Deposit } from './deposit'
@@ -10,10 +10,10 @@ import { Deposit } from './deposit'
 import { WithDraw } from './withdraw'
 
 export const HeaderBottom = () => {
-  const [isLogin] = useState<boolean>(true)
+  const [isLogin] = useState<boolean>(false)
   const { data } = useActiveStyle()
 
-  const style = makeStyle(data.data).get('desktop_homepage_headerMainBox')
+  const style = extractStyle(data.data).get('desktop_homepage_headerMainBox')
   return (
     <Fragment>
       {isLogin ? (

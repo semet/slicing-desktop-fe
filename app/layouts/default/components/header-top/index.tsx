@@ -3,13 +3,13 @@ import {
   HeaderTopRight,
   useActiveStyle
 } from '@/layouts/default'
-import makeStyle from '@/libs/make-style'
+import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
 
 export const HeaderTop = () => {
   const { data } = useActiveStyle()
 
-  const style = makeStyle(data.data).get('desktop_homepage_announcement')
+  const style = extractStyle(data.data).get('desktop_homepage_announcement')
   return (
     <div
       style={{

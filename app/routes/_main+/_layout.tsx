@@ -1,9 +1,5 @@
-import { json, Outlet, useLoaderData, useRouteError } from '@remix-run/react'
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient
-} from '@tanstack/react-query'
+import { json, Outlet, useRouteError } from '@remix-run/react'
+import { dehydrate, QueryClient } from '@tanstack/react-query'
 
 import { generalKeys } from '@/factories/general'
 import { DefaultLayout } from '@/layouts/default'
@@ -28,13 +24,10 @@ export const loader = async () => {
 }
 
 const ComponentName = () => {
-  const { dehydratedState } = useLoaderData<typeof loader>()
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <DefaultLayout>
-        <Outlet />
-      </DefaultLayout>
-    </HydrationBoundary>
+    <DefaultLayout>
+      <Outlet />
+    </DefaultLayout>
   )
 }
 

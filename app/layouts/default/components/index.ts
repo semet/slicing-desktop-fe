@@ -9,6 +9,7 @@ export * from './header-center'
 export * from './header-center-left'
 export * from './header-center-right'
 export * from './header-bottom'
+export * from './login-form'
 //Footer
 export * from './footer-container'
 export * from './footer-left'

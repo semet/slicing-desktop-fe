@@ -1,69 +1,100 @@
-import { Link } from '@remix-run/react'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
+import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
 import { useActiveStyle } from '@/layouts/default'
-import makeStyle from '@/libs/make-style'
+import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
 
 import { menuItems } from './data'
+import { GameCard } from './game-card'
 
 export const HeaderSecondary = () => {
   const { data } = useActiveStyle()
 
-  const style = makeStyle(data.data).get('desktop_homepage_gameCategoryContent')
+  const styles = extractStyle(data.data).get(
+    'desktop_homepage_gameCategoryContent'
+  )
   return (
     <div
-      className=""
-      style={
-        style.style_options === 'color'
-          ? {
-              backgroundColor: hexOf(
-                style.category_list_background_image
-              ).withOpacity(style.category_list_background_opacity)
-            }
+      className="bg-center"
+      style={{
+        ...(styles.style_options === 'color'
+          ? { backgroundColor: styles.category_list_background_color }
           : {
-              backgroundImage: `url(${style.category_list_background_image})`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundSize: '100% 100%'
-            }
-      }
+              backgroundImage: `url(${styles.category_list_background_image})`,
+              backgroundSize: '100% 100%',
+              backgroundRepeat: 'no-repeat'
+            }),
+        borderColor: styles.category_list_background_border_color
+      }}
     >
-      <ul className="flex justify-center py-4">
+      <nav className="flex justify-center">
         {menuItems.map((menu) => (
-          <li
+          <Popover
+            className="relative"
             key={menu.id}
-            className="px-9 text-[#02054E] hover:text-[#5056E4]"
           >
-            <Link
-              to={menu.url}
-              className="flex flex-col items-center"
-            >
-              <menu.icon />
-              {menu.title}
-            </Link>
-          </li>
+            {({ open }) => (
+              <>
+                <PopoverButton
+                  style={{
+                    backgroundColor: open
+                      ? hexOf(
+                          styles.category_list_icon_selected_box_color
+                        ).withOpacity(
+                          styles.category_list_icon_selected_box_opacity
+                        )
+                      : undefined,
+                    color: styles.category_list_icon_color
+                  }}
+                  className={({ active }) =>
+                    twMerge([
+                      'flex max-w-28 flex-col items-center gap-2 rounded px-12 py-4 text-sm text-[#02054E] focus:bg-black/50 focus:outline-none',
+                      active ? 'text-[#5056E4] outline-none ring-0' : ''
+                    ])
+                  }
+                >
+                  <menu.icon />
+                  {menu.title}
+                </PopoverButton>
+                <PopoverPanel
+                  anchor="bottom start"
+                  transition
+                  className="absolute top-full flex h-auto w-full origin-top flex-wrap justify-center gap-6 bg-black/50 py-4 transition duration-700 ease-in-out data-[closed]:h-0 data-[closed]:opacity-0"
+                >
+                  {open &&
+                    menu.children.map((child) => (
+                      <GameCard
+                        key={child.id}
+                        {...child}
+                      />
+                    ))}
+                </PopoverPanel>
+              </>
+            )}
+          </Popover>
         ))}
-
-        <li className="border-l-2 border-[#02054E] px-9 text-[#02054E] hover:text-[#5056E4]">
-          <Link
-            to="/promotion"
-            className="flex flex-col items-center"
+        <div className="mx-2 h-14 w-0.5 self-center bg-gray-400"></div>
+        <Popover>
+          <PopoverButton
+            style={{ color: styles.category_list_icon_color }}
+            className="flex max-w-24 flex-col items-center gap-2 rounded px-8 py-4 text-sm text-[#02054E] focus:bg-black/50 focus:outline-none"
           >
             <PromotionIcon />
             Promotion
-          </Link>
-        </li>
-        <li className="px-9 text-[#02054E] hover:text-[#5056E4]">
-          <Link
-            to="/promotion"
-            className="flex flex-col items-center"
+          </PopoverButton>
+        </Popover>
+        <Popover>
+          <PopoverButton
+            style={{ color: styles.category_list_icon_color }}
+            className="flex max-w-24 flex-col items-center gap-2 rounded px-8 py-4 text-sm text-[#02054E] focus:bg-black/50 focus:outline-none"
           >
             <ReferralIcon />
             Referral
-          </Link>
-        </li>
-      </ul>
+          </PopoverButton>
+        </Popover>
+      </nav>
     </div>
   )
 }

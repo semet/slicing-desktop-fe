@@ -1,6 +1,6 @@
 import { DesktopStyle } from '@/schemas/general'
 
-const makeStyle = (styles: DesktopStyle) => {
+const extractStyle = (styles: DesktopStyle) => {
   return {
     get<K extends keyof DesktopStyle>(key: K): DesktopStyle[K] {
       return styles[key]
@@ -8,4 +8,4 @@ const makeStyle = (styles: DesktopStyle) => {
   }
 }
 
-export default makeStyle
+export default extractStyle

@@ -1,0 +1,17 @@
+/* button large */
+.loginButtonLg {
+  background-color: var(--login-button-background-color);
+  background-image: var(--login-button-lg-background-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  border: 2px solid var(--login-button-border-color);
+  color: var(--login-button-text);
+  transition: background-color 0.3s ease;
+}
+.loginButtonLg:hover {
+  background-color: var(--login-button-background-hover-color);
+}
+.loginButtonLg:focus {
+  background-color: var(--login-button-background-active-color);
+}
