@@ -1,13 +1,8 @@
-// import { AutoTransfer } from './auto-transfer'
 import { Fragment, useState } from 'react'
 
-import { useActiveStyle } from '@/layouts/default'
+import { useActiveStyle, Deposit, WithDraw } from '@/layouts/default'
 import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
-
-import { Deposit } from './deposit'
-// import { InstantDeposit } from './instant-deposit'
-import { WithDraw } from './withdraw'
 
 export const HeaderBottom = () => {
   const [isLogin] = useState<boolean>(false)

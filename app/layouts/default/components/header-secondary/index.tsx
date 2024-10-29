@@ -2,12 +2,11 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
-import { useActiveStyle } from '@/layouts/default'
+import { useActiveStyle, PlayNowCard } from '@/layouts/default'
 import extractStyle from '@/libs/make-style'
 import { hexOf } from '@/utils'
 
 import { menuItems } from './data'
-import { GameCard } from './game-card'
 
 export const HeaderSecondary = () => {
   const { data } = useActiveStyle()
@@ -65,7 +64,7 @@ export const HeaderSecondary = () => {
                 >
                   {open &&
                     menu.children.map((child) => (
-                      <GameCard
+                      <PlayNowCard
                         key={child.id}
                         {...child}
                       />

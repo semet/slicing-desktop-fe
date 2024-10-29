@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
-import { AccountInfo } from './account-info'
-import { Authentication } from './authentication'
+import { AccountInfo, Authentication } from '@/layouts/default'
 
 export const HeaderCenterRight = () => {
   const [isLogin] = useState<boolean>(false)

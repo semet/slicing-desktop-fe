@@ -1,5 +1,4 @@
-import { Login } from './login'
-import { Register } from './register'
+import { Login, Register } from '@/layouts/default'
 
 export const Authentication = () => {
   return (

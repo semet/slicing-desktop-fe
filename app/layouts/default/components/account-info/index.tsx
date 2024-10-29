@@ -1,6 +1,4 @@
-import { CoinStatus } from './coin-status'
-import { CurrentUser } from './current-user'
-import { Inbox } from './inbox'
+import { CoinStatus, CurrentUser, Inbox } from '@/layouts/default'
 
 export const AccountInfo = () => {
   return (

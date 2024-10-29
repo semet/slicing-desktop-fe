@@ -8,7 +8,7 @@ type TProps = {
   image: string
 }
 
-export const GameCard: FC<TProps> = ({ image }) => {
+export const PlayNowCard: FC<TProps> = ({ image }) => {
   const { data } = useActiveStyle()
 
   const styles = extractStyle(data.data).get(

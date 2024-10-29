@@ -1,4 +1,4 @@
-import { SidebarToggle } from './sidebar-toggle'
+import { SidebarToggle } from '@/layouts/default'
 
 export const HeaderCenterLeft = () => {
   return (
