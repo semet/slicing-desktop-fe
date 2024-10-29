@@ -7,17 +7,9 @@ import { RxReload } from 'react-icons/rx'
 import { twMerge } from 'tailwind-merge'
 
 import { Checkbox, Input } from '@/components/ui'
-import { useActiveStyle, makeButtonStyle } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
 import { loginSchema, TLoginForm } from '@/schemas/auth'
 
-import css from './index.module.css'
-
 export const LoginForm = () => {
-  const { data } = useActiveStyle()
-  const rawStyles = extractStyle(data.data).get('desktop_button_login')
-  const { buttonLg } = makeButtonStyle(rawStyles)
-
   const [passwordType, setPasswordType] = useState<'text' | 'password'>(
     'password'
   )
@@ -97,10 +89,8 @@ export const LoginForm = () => {
         </div>
         <button
           className={twMerge([
-            'w-full rounded-full bg-blue-500 py-2 text-center font-semibold text-white',
-            css.loginButtonLg
+            'w-full rounded-full bg-blue-500 py-2 text-center font-semibold text-white'
           ])}
-          style={buttonLg}
           type="submit"
         >
           Login

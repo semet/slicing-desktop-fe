@@ -3,25 +3,14 @@ import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { ModalDialog } from '@/components/ui'
-import { LoginForm, useActiveStyle, makeButtonStyle } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-
-import css from './css/login.module.css'
+import { LoginForm } from '@/layouts/default'
 
 export const Login = () => {
-  const { data } = useActiveStyle()
-  const rawStyles = extractStyle(data.data).get('desktop_button_login')
-  const { buttonSm } = makeButtonStyle(rawStyles)
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
   return (
     <>
       <button
-        className={twMerge([
-          'min-w-32 rounded-full py-2 font-semibold',
-          css.loginButton
-        ])}
-        style={buttonSm}
+        className={twMerge(['min-w-32 rounded-full py-2 font-semibold'])}
         onClick={() => setIsOpen(true)}
       >
         Login
