@@ -3,8 +3,7 @@ import {
   HeaderCenterRight,
   useActiveStyle
 } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-import { hexOf } from '@/utils'
+import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderCenter = () => {
   const { data } = useActiveStyle()
@@ -15,7 +14,7 @@ export const HeaderCenter = () => {
       style={
         style.style_options === 'color'
           ? {
-              backgroundColor: hexOf(style.background_color).withOpacity(
+              backgroundColor: convertHex(style.background_color).withOpacity(
                 style.background_opacity
               )
             }

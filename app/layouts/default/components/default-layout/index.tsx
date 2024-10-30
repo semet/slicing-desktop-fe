@@ -11,7 +11,7 @@ import {
   HeaderTop,
   useActiveStyle
 } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
+import { extractStyle } from '@/utils'
 
 export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
   const { data } = useActiveStyle()

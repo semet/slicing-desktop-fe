@@ -8,12 +8,15 @@ import {
   useRouteError
 } from '@remix-run/react'
 import './tailwind.css'
+import 'react-toastify/dist/ReactToastify.css'
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { useDehydratedState } from 'use-dehydrated-state'
 
 export const links: LinksFunction = () => [
@@ -73,6 +76,8 @@ export default function App() {
       <HydrationBoundary state={dehydratedState}>
         <Outlet />
       </HydrationBoundary>
+      <ToastContainer />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
 }

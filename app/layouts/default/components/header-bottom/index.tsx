@@ -1,8 +1,7 @@
 import { Fragment, useState } from 'react'
 
 import { useActiveStyle, Deposit, WithDraw } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-import { hexOf } from '@/utils'
+import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderBottom = () => {
   const [isLogin] = useState<boolean>(false)
@@ -17,9 +16,9 @@ export const HeaderBottom = () => {
           style={
             style.style_options === 'color'
               ? {
-                  backgroundColor: hexOf(style.background_color).withOpacity(
-                    style.background_opacity
-                  )
+                  backgroundColor: convertHex(
+                    style.background_color
+                  ).withOpacity(style.background_opacity)
                 }
               : {
                   backgroundImage: `url(${style.background_image})`,

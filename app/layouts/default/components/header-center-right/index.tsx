@@ -1,8 +1,7 @@
-import { useState } from 'react'
-
+import { useGetPlayer } from '@/features/player'
 import { AccountInfo, Authentication } from '@/layouts/default'
 
 export const HeaderCenterRight = () => {
-  const [isLogin] = useState<boolean>(false)
-  return <div>{!isLogin ? <Authentication /> : <AccountInfo />}</div>
+  const { data } = useGetPlayer()
+  return <div>{data !== undefined ? <AccountInfo /> : <Authentication />}</div>
 }

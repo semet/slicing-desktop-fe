@@ -1,9 +1,11 @@
+import Cookie from 'js-cookie'
 import xior, { merge } from 'xior'
+
+const token = Cookie.get('token')
 
 const HttpClient = () => {
   const baseURL = process.env.API_URL
   const apiKey = process.env.API_KEY
-
   const instance = xior.create({
     baseURL
   })
@@ -16,7 +18,8 @@ const HttpClient = () => {
     return merge(config, {
       headers: {
         ...(apiKey && { 'x-data-reference': apiKey }),
-        'x-device': config.headers['x-device'] ?? 'desktop'
+        'x-device': config.headers['x-device'] ?? 'desktop',
+        Authorization: `Bearer ${token}`
       }
     })
   })

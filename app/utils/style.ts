@@ -1,4 +1,14 @@
-export const hexOf = (hex: string) => {
+import { DesktopStyle } from '@/schemas/general'
+
+export const extractStyle = (styles: DesktopStyle) => {
+  return {
+    get<K extends keyof DesktopStyle>(key: K): DesktopStyle[K] {
+      return styles[key]
+    }
+  }
+}
+
+export const convertHex = (hex: string) => {
   const parsed = hex
     ?.replace(
       /^#?([\da-f])([\da-f])([\da-f])$/i,

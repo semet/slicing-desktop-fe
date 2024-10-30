@@ -1,1 +1,2 @@
-export * from './hex-to-rgb'
+export * from './hash'
+export * from './style'

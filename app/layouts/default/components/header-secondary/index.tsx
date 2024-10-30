@@ -3,8 +3,7 @@ import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
 import { useActiveStyle, PlayNowCard } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-import { hexOf } from '@/utils'
+import { convertHex, extractStyle } from '@/utils'
 
 import { menuItems } from './data'
 
@@ -39,7 +38,7 @@ export const HeaderSecondary = () => {
                 <PopoverButton
                   style={{
                     backgroundColor: open
-                      ? hexOf(
+                      ? convertHex(
                           styles.category_list_icon_selected_box_color
                         ).withOpacity(
                           styles.category_list_icon_selected_box_opacity

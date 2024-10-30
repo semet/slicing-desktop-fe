@@ -3,14 +3,30 @@ import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { ModalDialog } from '@/components/ui'
-import { LoginForm } from '@/layouts/default'
+import { LoginForm, useActiveStyle } from '@/layouts/default'
+import { extractStyle } from '@/utils'
+
+import css from './index.module.css'
+import { makeLoginButtonStyle, makeRegisterButtonStyle } from './style'
 
 export const Login = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const { data } = useActiveStyle()
+
+  const loginStylesRaw = extractStyle(data.data).get('desktop_button_login')
+  const registerStylesRaw = extractStyle(data.data).get(
+    'desktop_button_register'
+  )
+  const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
+  const registerButtonStyle = makeRegisterButtonStyle(registerStylesRaw)
   return (
     <>
       <button
-        className={twMerge(['min-w-32 rounded-full py-2 font-semibold'])}
+        className={twMerge([
+          'min-w-32 rounded-full py-2 font-semibold',
+          css.loginButton
+        ])}
+        style={loginButtonStyle}
         onClick={() => setIsOpen(true)}
       >
         Login
@@ -32,7 +48,11 @@ export const Login = () => {
           <span className="text-sm text-gray-600">Belum punya akun?</span>
           <Link
             to="/register"
-            className="w-full rounded-full bg-secondary py-2 text-center font-semibold text-white"
+            className={twMerge([
+              'w-full rounded-full py-2 text-center font-semibold',
+              css.registerButton
+            ])}
+            style={registerButtonStyle}
           >
             Daftar
           </Link>

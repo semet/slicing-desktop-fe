@@ -1,8 +1,7 @@
 import { FC } from 'react'
 
 import { useActiveStyle } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-import { hexOf } from '@/utils'
+import { convertHex, extractStyle } from '@/utils'
 
 type TProps = {
   image: string
@@ -22,7 +21,7 @@ export const PlayNowCard: FC<TProps> = ({ image }) => {
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         backgroundSize: '100% 100%',
-        borderColor: hexOf(styles.provider_box_border_color).withOpacity(
+        borderColor: convertHex(styles.provider_box_border_color).withOpacity(
           styles.provider_box_border_opacity
         )
       }}

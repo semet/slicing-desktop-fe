@@ -3,8 +3,7 @@ import {
   HeaderTopRight,
   useActiveStyle
 } from '@/layouts/default'
-import extractStyle from '@/libs/make-style'
-import { hexOf } from '@/utils'
+import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderTop = () => {
   const { data } = useActiveStyle()
@@ -13,7 +12,7 @@ export const HeaderTop = () => {
   return (
     <div
       style={{
-        backgroundColor: hexOf(style?.background_color).withOpacity(
+        backgroundColor: convertHex(style?.background_color).withOpacity(
           style?.background_opacity
         )
       }}
