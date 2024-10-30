@@ -16,9 +16,10 @@ export const HeaderTop = () => {
           style?.background_opacity
         )
       }}
-      className="flex justify-between py-1 pl-28 pr-6"
+      className="flex justify-between px-4 py-1 lg:pl-28 lg:pr-6"
     >
       <HeaderTopLeft />
+
       <HeaderTopRight />
     </div>
   )

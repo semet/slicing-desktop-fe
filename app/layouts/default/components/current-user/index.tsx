@@ -1,11 +1,17 @@
 import { FaCrown } from 'react-icons/fa'
 import { HiUserCircle } from 'react-icons/hi'
 
+import { useGetPlayer } from '@/features/player'
+
 export const CurrentUser = () => {
+  const { data } = useGetPlayer()
+
   return (
     <div className="flex items-center gap-2">
       <HiUserCircle className="h-8 w-8 text-white" />
-      <span className="font-semibold text-white">Hai, belalang Salto</span>
+      <span className="font-semibold text-white">
+        Hai, {data?.data?.username}
+      </span>
       <div className="flex items-center gap-1 rounded bg-white px-2 py-1">
         <FaCrown className="h-6 w-6 text-gray-900" />
         <span>VIP</span>

@@ -1,8 +1,11 @@
 import { TfiReload } from 'react-icons/tfi'
 
+import { useGetPlayer } from '@/features/player'
+
 export const CoinStatus = () => {
+  const { data } = useGetPlayer()
   return (
-    <div className="flex items-center gap-2 rounded bg-white px-2 py-1">
+    <div className="flex items-center rounded bg-white px-2 py-1">
       <img
         src="/coin.png"
         alt="Coin Status"
@@ -10,7 +13,9 @@ export const CoinStatus = () => {
         height={20}
       />
 
-      <div className="min-w-[130px] flex-1 font-semibold">500</div>
+      <div className="flex-1 flex-shrink flex-grow px-2 font-semibold">
+        {data?.data?.main_wallet?.balance}
+      </div>
 
       <button>
         <TfiReload className="h-5 w-5 text-[#0372BA]" />
