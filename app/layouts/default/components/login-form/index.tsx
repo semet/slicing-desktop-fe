@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useFetcher } from '@remix-run/react'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
+import { CgSpinner } from 'react-icons/cg'
 import { RxReload } from 'react-icons/rx'
 import { toast } from 'react-toastify'
 import { twMerge } from 'tailwind-merge'
@@ -15,7 +16,7 @@ import { extractStyle } from '@/utils'
 import css from './index.module.css'
 import { makeLoginButtonStyle } from './style'
 
-export const LoginForm = () => {
+export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
   const [passwordType, setPasswordType] = useState<'text' | 'password'>(
     'password'
   )
@@ -50,7 +51,8 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data?.success) {
-      location.reload()
+      fetcher.load('/')
+      onCLose()
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
@@ -58,7 +60,7 @@ export const LoginForm = () => {
       toast.error(fetcher.data?.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetcher.data?.success, fetcher.state])
+  }, [fetcher, fetcher.data?.success, fetcher.state])
   const onSubmit = handleSubmit((data) => {
     const payload = {
       captcha_id: captchaData?.data.captcha_id,
@@ -82,7 +84,7 @@ export const LoginForm = () => {
     })
   })
 
-  const loginStylesRaw = extractStyle(data.data).get('desktop_button_login')
+  const loginStylesRaw = extractStyle(data?.data).get('desktop_button_login')
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
   return (
     <FormProvider {...formMethods}>
@@ -162,13 +164,18 @@ export const LoginForm = () => {
         </div>
         <button
           className={twMerge([
-            'w-full rounded-full py-2 text-center font-semibold',
+            'min-h-[44px] w-full rounded-full py-2 text-center font-semibold',
+            fetcher.state === 'submitting' && 'cursor-not-allowed opacity-50',
             css.loginButtonLg
           ])}
           style={loginButtonStyle}
           type="submit"
         >
-          Login
+          {fetcher.state === 'submitting' ? (
+            <CgSpinner className="mx-auto animate-spin text-xl" />
+          ) : (
+            'Login'
+          )}
         </button>
       </fetcher.Form>
     </FormProvider>

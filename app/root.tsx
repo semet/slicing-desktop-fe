@@ -1,10 +1,12 @@
 import type { LinksFunction } from '@remix-run/node'
 import {
+  json,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useRouteError
 } from '@remix-run/react'
 import './tailwind.css'
@@ -32,7 +34,17 @@ export const links: LinksFunction = () => [
   }
 ]
 
+export async function loader() {
+  return json({
+    ENV: {
+      API_URL: process.env.API_URL,
+      API_KEY: process.env.API_KEY
+    }
+  })
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<typeof loader>()
   return (
     <html
       lang="en"
@@ -50,6 +62,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+          }}
+        />
         <Scripts />
       </body>
     </html>
@@ -64,7 +81,9 @@ export default function App() {
           queries: {
             // With SSR, we usually want to set some default staleTime
             // above 0 to avoid refetching immediately on the client
-            staleTime: 60 * 1000
+            staleTime: 60 * 1000,
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
           }
         }
       })

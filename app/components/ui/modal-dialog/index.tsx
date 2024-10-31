@@ -26,7 +26,7 @@ export const ModalDialog: FC<TProps> = (props) => {
       onClose={() => setIsOpen(false)}
       transition
       className={twMerge([
-        'fixed inset-0 flex w-screen items-start justify-center bg-black/30 transition duration-300 ease-out data-[closed]:opacity-0',
+        'fixed inset-0 z-50 flex w-screen items-start justify-center bg-black/30 transition duration-300 ease-out data-[closed]:opacity-0',
         dialogClassName
       ])}
     >

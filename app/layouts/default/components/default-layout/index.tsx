@@ -16,12 +16,13 @@ import { extractStyle } from '@/utils'
 export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
   const { data } = useActiveStyle()
 
-  const style = extractStyle(data.data).get('desktop_homepage_body')
+  const style = extractStyle(data?.data).get('desktop_homepage_body')
+
   return (
     <main
-      className="h-full max-w-full bg-cover bg-fixed bg-center bg-no-repeat"
+      className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url(${style.background_body_image})`
+        backgroundImage: `url(${style?.background_body_image})`
       }}
     >
       <HeaderPrimary>

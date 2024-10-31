@@ -8,7 +8,7 @@ export const getCaptchaRequest = async (params: { action: string }) => {
       action
     })
     return captchaResponseSchema.parse(data)
-  } catch {
+  } catch (err) {
     throw new Error('Failed to fetch style options')
   }
 }

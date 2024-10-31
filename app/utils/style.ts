@@ -1,6 +1,11 @@
 import { DesktopStyle } from '@/schemas/general'
 
-export const extractStyle = (styles: DesktopStyle) => {
+export const extractStyle = (styles?: DesktopStyle) => {
+  if (!styles) {
+    return {
+      get: () => undefined
+    }
+  }
   return {
     get<K extends keyof DesktopStyle>(key: K): DesktopStyle[K] {
       return styles[key]
@@ -8,7 +13,7 @@ export const extractStyle = (styles: DesktopStyle) => {
   }
 }
 
-export const convertHex = (hex: string) => {
+export const convertHex = (hex?: string) => {
   const parsed = hex
     ?.replace(
       /^#?([\da-f])([\da-f])([\da-f])$/i,
@@ -20,7 +25,7 @@ export const convertHex = (hex: string) => {
 
   const rgbValue = `rgb(${parsed?.join(', ')})`
   return {
-    withOpacity(opacity: string) {
+    withOpacity(opacity?: string) {
       return `rgba(${parsed?.join(', ')} ${opacity ? `, ${Number.parseInt(opacity) / 100}` : ''})`.toString()
     },
     toRgb() {

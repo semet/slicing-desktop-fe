@@ -7,8 +7,7 @@ import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderTop = () => {
   const { data } = useActiveStyle()
-
-  const style = extractStyle(data.data).get('desktop_homepage_announcement')
+  const style = extractStyle(data?.data).get('desktop_homepage_announcement')
   return (
     <div
       style={{

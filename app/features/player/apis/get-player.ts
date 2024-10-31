@@ -12,7 +12,6 @@ export const getPlayerRequest = async (params: Params) => {
 
   try {
     const { data } = await HttpServer(accessToken).get(`/players/${playerId}`)
-
     return data
   } catch (err) {
     throw new Error('Failed to get Player Data')

@@ -9,7 +9,7 @@ import { makeRegisterButtonStyle } from './style'
 export const Register = () => {
   const { data } = useActiveStyle()
 
-  const registerStylesRaw = extractStyle(data.data).get(
+  const registerStylesRaw = extractStyle(data?.data).get(
     'desktop_button_register'
   )
   const registerButtonStyle = makeRegisterButtonStyle(registerStylesRaw)

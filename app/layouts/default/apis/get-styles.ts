@@ -5,7 +5,7 @@ export const getStyleRequest = async () => {
   try {
     const { data } = await HttpServer().get('/themes/active/style_options')
     return styleSchema.parse(data)
-  } catch {
+  } catch (err) {
     throw new Error('Failed to fetch style options')
   }
 }

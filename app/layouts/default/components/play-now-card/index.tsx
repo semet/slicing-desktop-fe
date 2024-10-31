@@ -1,28 +1,26 @@
 import { FC } from 'react'
 
 import { useActiveStyle } from '@/layouts/default'
+import { TProviderGroup } from '@/schemas/general'
 import { convertHex, extractStyle } from '@/utils'
 
-type TProps = {
-  image: string
-}
-
-export const PlayNowCard: FC<TProps> = ({ image }) => {
+export const PlayNowCard: FC<TProviderGroup> = ({ image_desktop }) => {
   const { data } = useActiveStyle()
 
-  const styles = extractStyle(data.data).get(
+  const styles = extractStyle(data?.data).get(
     'desktop_homepage_gameCategoryContent'
   )
+
   return (
     <div
       className="group relative h-28 w-60 overflow-hidden rounded-xl border-2 bg-cover"
       style={{
-        backgroundImage: `url(${image})`,
+        backgroundImage: `url(${image_desktop})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         backgroundSize: '100% 100%',
-        borderColor: convertHex(styles.provider_box_border_color).withOpacity(
-          styles.provider_box_border_opacity
+        borderColor: convertHex(styles?.provider_box_border_color).withOpacity(
+          styles?.provider_box_border_opacity
         )
       }}
     >

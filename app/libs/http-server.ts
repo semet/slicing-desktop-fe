@@ -1,8 +1,9 @@
+import { isServer } from '@tanstack/react-query'
 import xior, { merge } from 'xior'
 
 const HttpServer = (token?: string) => {
-  const baseURL = process.env.API_URL
-  const apiKey = process.env.API_KEY
+  const baseURL = isServer ? process.env.API_URL : window.ENV.API_URL
+  const apiKey = isServer ? process.env.API_KEY : window.ENV.API_KEY
   const instance = xior.create({
     baseURL
   })

@@ -61,7 +61,6 @@ export const withAccessToken = <P = object, T = unknown>(
 ) => {
   return async (params: P): Promise<T> => {
     const accessToken = Cookies.get('token')
-    console.log('accessToken', accessToken)
     if (!accessToken) {
       throw new Error('Access token is missing')
     }

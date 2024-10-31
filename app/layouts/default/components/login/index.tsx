@@ -13,8 +13,8 @@ export const Login = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { data } = useActiveStyle()
 
-  const loginStylesRaw = extractStyle(data.data).get('desktop_button_login')
-  const registerStylesRaw = extractStyle(data.data).get(
+  const loginStylesRaw = extractStyle(data?.data).get('desktop_button_login')
+  const registerStylesRaw = extractStyle(data?.data).get(
     'desktop_button_register'
   )
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
@@ -38,7 +38,7 @@ export const Login = () => {
         dialogClassName="pt-40"
         panelClassName="w-[395px] flex flex-col gap-4"
       >
-        <LoginForm />
+        <LoginForm onCLose={() => setIsOpen(false)} />
         <div className="inline-flex items-center gap-2">
           <span className="h-0 flex-1 border-b-2 bg-gray-600" />
           <span className="text-gray-600">Atau</span>

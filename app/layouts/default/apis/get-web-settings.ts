@@ -5,7 +5,7 @@ export const getWebSettingsRequest = async () => {
   try {
     const { data } = await HttpServer().get('/web/settings')
     return webSettingsSchema.parse(data)
-  } catch {
+  } catch (err) {
     throw new Error('Failed to fetch web settings')
   }
 }

@@ -5,7 +5,7 @@ export const getWebMetasRequest = async () => {
   try {
     const { data } = await HttpServer().get('/moneysite-metas')
     return webMetasSchema.parse(data)
-  } catch {
+  } catch (err) {
     throw new Error('Failed to fetch web settings')
   }
 }
