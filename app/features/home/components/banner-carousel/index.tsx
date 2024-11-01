@@ -31,7 +31,7 @@ export const BannerCarousel = () => {
   }, [emblaApi])
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative flex flex-col gap-5 overflow-hidden">
       <div ref={emblaRef}>
         <div className="flex">
           {banners?.data
@@ -71,7 +71,7 @@ export const BannerCarousel = () => {
         className="absolute right-11 top-1/2 bg-teal-500"
         iconClassName="rotate-180 mr-2"
       />
-      <div className="mt-5 flex items-center justify-center gap-x-2">
+      <div className="flex items-center justify-center gap-x-2">
         {scrollSnaps.map((_, index) => (
           <button
             aria-label="scroll-snap-button"

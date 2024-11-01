@@ -15,3 +15,26 @@ export const extractCookieFromHeaders = (headers: Headers, name: string) => {
     .trim()
   return cookie
 }
+
+export const currencyFormatter = (
+  amount: number,
+  options?: Intl.NumberFormatOptions,
+  isTruncated: boolean = false
+) => {
+  if (!options) {
+    options = {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  }
+
+  if (isTruncated) {
+    // Determine the factor based on the maximum fraction digits
+    const factor = Math.pow(10, options.maximumFractionDigits || 2)
+
+    // Truncate the amount based on the maximum fraction digits
+    amount = Math.floor(amount * factor) / factor
+  }
+
+  return amount?.toLocaleString('en-US', options)
+}

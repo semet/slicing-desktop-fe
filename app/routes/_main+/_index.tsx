@@ -7,17 +7,15 @@ import { homeKeys } from '@/factories/home'
 import {
   BannerCarousel,
   BannerCarouselSkeleton,
-  getBannerCarousel
+  getBannerCarousel,
+  ProgressiveJackpot
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
+import { parseLanguageFromHeaders } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
-  const language = headers
-    .get('Accept-Language')
-    ?.split(',')
-    .map((lang) => (lang.includes('-') ? lang.split('-')[0] : lang))[0]
-
+  const language = parseLanguageFromHeaders(headers)
   const queryClient = new QueryClient()
 
   queryClient.prefetchQuery({
@@ -36,12 +34,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const Home = () => {
   const { dehydratedState } = useLoaderData<typeof loader>()
   return (
-    <div>
+    <div className="flex flex-col gap-10">
       <Suspense fallback={<BannerCarouselSkeleton />}>
         <Await resolve={dehydratedState}>
           <BannerCarousel />
         </Await>
       </Suspense>
+      <ProgressiveJackpot />
     </div>
   )
 }
