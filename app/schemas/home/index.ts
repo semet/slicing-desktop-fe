@@ -1,3 +1,6 @@
 export * from './banner-schema'
 export * from './favorite-games-schema'
 export * from './last-played-schema'
+export * from './payment-methods-schema'
+export * from './promotion-schema'
+export * from './providers-schema'

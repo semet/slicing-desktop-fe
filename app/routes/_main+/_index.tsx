@@ -1,4 +1,4 @@
-import { defer, LoaderFunctionArgs } from '@remix-run/node'
+import { defer, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
 import { Await, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
 
@@ -9,12 +9,25 @@ import {
   FavoriteGameSkeleton,
   getBannerCarousel,
   getFavoriteGames,
+  getPaymentMethods,
+  getPromotion,
+  getProviders,
   PaymentMethodsSection,
-  ProgressiveJackpotSection
+  ProgressiveJackpotSection,
+  PromotionSection,
+  ProvidersSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
 import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      title: 'Home'
+    }
+  ]
+}
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
@@ -31,13 +44,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const bannersData = getBannerCarousel({
     language: language ?? 'id'
   })
+  const paymentMethods = getPaymentMethods()
+  const promotions = getPromotion({
+    language: language ?? 'id'
+  })
+  const providers = getProviders()
 
   return defer(
     {
       bannersData,
       favoriteGames,
       isAuthenticated,
-      headers
+      paymentMethods,
+      promotions,
+      providers
     },
     {
       headers: {
@@ -48,8 +68,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 const Home = () => {
-  const { isAuthenticated, bannersData, favoriteGames } =
-    useLoaderData<typeof loader>()
+  const {
+    isAuthenticated,
+    bannersData,
+    favoriteGames,
+    paymentMethods,
+    promotions,
+    providers
+  } = useLoaderData<typeof loader>()
 
   return (
     <div className="flex flex-col gap-10">
@@ -68,7 +94,23 @@ const Home = () => {
           </Await>
         </Suspense>
       )}
-      <PaymentMethodsSection />
+      <Suspense fallback={null}>
+        <Await resolve={paymentMethods}>
+          {(paymentMethods) => (
+            <PaymentMethodsSection paymentMethods={paymentMethods} />
+          )}
+        </Await>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Await resolve={promotions}>
+          {(promotions) => <PromotionSection promotions={promotions} />}
+        </Await>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Await resolve={providers}>
+          {(providers) => <ProvidersSection providers={providers} />}
+        </Await>
+      </Suspense>
     </div>
   )
 }
