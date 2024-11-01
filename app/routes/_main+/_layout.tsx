@@ -11,10 +11,7 @@ import {
   FooterRight,
   getCaptchaRequest,
   getGameGroupRequest,
-  getLanguageSettingsRequest,
   getStyleRequest,
-  getWebMetasRequest,
-  getWebSettingsRequest,
   HeaderBottom,
   HeaderCenter,
   HeaderPrimary,
@@ -25,20 +22,11 @@ import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
 import { TDesktopStyleData } from '@/schemas/general'
 import { TPlayer } from '@/schemas/player'
-import { extractStyle } from '@/utils'
+import { extractCookieFromHeaders, extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
-  const language = headers
-    .get('Accept-Language')
-    ?.split(',')
-    .map((lang) => (lang.includes('-') ? lang.split('-')[0] : lang))[0]
-  const accessToken = headers
-    .get('Cookie')
-    ?.split(';')
-    .find((cookie) => cookie.includes('token'))
-    ?.split('=')[1]
-    .trim()
+  const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
 
   const queryClient = new QueryClient()
@@ -61,18 +49,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   await queryClient.prefetchQuery({
     queryKey: generalKeys.activeStyle,
     queryFn: getStyleRequest
-  })
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.webMeta,
-    queryFn: getWebMetasRequest
-  })
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.language,
-    queryFn: () => getLanguageSettingsRequest({ lang: language })
-  })
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.webSettings,
-    queryFn: getWebSettingsRequest
   })
 
   await queryClient.prefetchQuery({

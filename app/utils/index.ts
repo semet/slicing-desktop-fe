@@ -1,3 +1,4 @@
-export * from './hash'
-export * from './style'
 export * from './general'
+export * from './hash'
+export * from './parser'
+export * from './style'

@@ -1,4 +1,4 @@
-import type { LinksFunction } from '@remix-run/node'
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
   json,
   Links,
@@ -9,9 +9,8 @@ import {
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
-import './tailwind.css'
-import 'react-toastify/dist/ReactToastify.css'
 import {
+  dehydrate,
   HydrationBoundary,
   QueryClient,
   QueryClientProvider
@@ -19,7 +18,18 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { useDehydratedState } from 'use-dehydrated-state'
+import './tailwind.css'
+
+import { generalKeys } from './factories/general'
+import {
+  getLanguageSettingsRequest,
+  getWebMetasRequest,
+  getWebSettingsRequest
+} from './layouts/default'
+import { TWebSettings } from './schemas/general'
+import { parseLanguageFromHeaders } from './utils'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -34,17 +44,40 @@ export const links: LinksFunction = () => [
   }
 ]
 
-export async function loader() {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const headers = request.headers
+  const language = parseLanguageFromHeaders(headers)
+
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: generalKeys.webSettings,
+    queryFn: getWebSettingsRequest
+  })
+
+  await queryClient.prefetchQuery({
+    queryKey: generalKeys.webMeta,
+    queryFn: getWebMetasRequest
+  })
+  await queryClient.prefetchQuery({
+    queryKey: generalKeys.language,
+    queryFn: () => getLanguageSettingsRequest({ lang: language })
+  })
+
   return json({
+    dehydratedState: dehydrate(queryClient),
     ENV: {
       API_URL: process.env.API_URL,
       API_KEY: process.env.API_KEY
-    }
+    },
+    webSettingsData: queryClient.getQueryData<TWebSettings>(
+      generalKeys.webSettings
+    )
   })
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const data = useLoaderData<typeof loader>()
+  const { ENV, webSettingsData } = useLoaderData<typeof loader>()
   return (
     <html
       lang="en"
@@ -54,7 +87,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1"
+          content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+        ></meta>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${webSettingsData?.data?.web_google_analytics.value}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${webSettingsData?.data?.web_google_analytics.value}', {
+                    page_path: window.location.pathname,
+                  });
+                `
+          }}
         />
         <Meta />
         <Links />
@@ -64,7 +113,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ScrollRestoration getKey={(location) => location.pathname} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+            __html: `window.ENV = ${JSON.stringify(ENV)}`
           }}
         />
         <Scripts />
