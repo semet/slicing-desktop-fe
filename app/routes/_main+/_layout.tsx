@@ -61,12 +61,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       })
   })
 
-  return defer({
-    dehydratedState: dehydrate(queryClient),
-    styleData: queryClient.getQueryData<TDesktopStyleData>(
-      generalKeys.activeStyle
-    )
-  })
+  return defer(
+    {
+      dehydratedState: dehydrate(queryClient),
+      styleData: queryClient.getQueryData<TDesktopStyleData>(
+        generalKeys.activeStyle
+      )
+    },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+      }
+    }
+  )
 }
 
 const DefaultLayoutRoute = () => {

@@ -9,7 +9,7 @@ import {
   FavoriteGameSkeleton,
   getBannerCarousel,
   getFavoriteGames,
-  PaymentMethods,
+  PaymentMethodsSection,
   ProgressiveJackpotSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
@@ -32,12 +32,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     language: language ?? 'id'
   })
 
-  return defer({
-    bannersData,
-    favoriteGames,
-    isAuthenticated,
-    headers
-  })
+  return defer(
+    {
+      bannersData,
+      favoriteGames,
+      isAuthenticated,
+      headers
+    },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+      }
+    }
+  )
 }
 
 const Home = () => {
@@ -61,7 +68,7 @@ const Home = () => {
           </Await>
         </Suspense>
       )}
-      <PaymentMethods />
+      <PaymentMethodsSection />
     </div>
   )
 }
