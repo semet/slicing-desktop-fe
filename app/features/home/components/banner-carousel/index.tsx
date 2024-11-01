@@ -1,19 +1,19 @@
 import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
-import { useCallback } from 'react'
+import { FC, useCallback } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import { BannerButton, useGetBannerCarousel } from '@/features/home'
+import { BannerButton } from '@/features/home'
 import { useEmblaScroll } from '@/hooks'
+import { TBanner } from '@/schemas/home'
 
-export const BannerCarousel = () => {
+export const BannerCarousel: FC<{ banners: TBanner }> = ({ banners }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true
     },
     [Autoplay({ delay: 5_000 })]
   )
-  const { data: banners, isLoading } = useGetBannerCarousel()
 
   const { scrollSnaps, onDotButtonClick, selectedIndex } =
     useEmblaScroll(emblaApi)
@@ -40,8 +40,7 @@ export const BannerCarousel = () => {
               <div
                 key={item.id}
                 className={twMerge([
-                  'relative block aspect-[360/137] flex-[0_0_100%] bg-cover bg-center bg-no-repeat',
-                  isLoading && 'animate-pulse bg-slate-500'
+                  'relative block aspect-[360/137] flex-[0_0_100%] bg-cover bg-center bg-no-repeat'
                 ])}
                 style={{
                   backgroundImage: `url(${item.picture_url})`

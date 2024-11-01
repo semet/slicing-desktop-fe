@@ -5,7 +5,7 @@ import { currencyFormatter, extractStyle } from '@/utils'
 
 import { makeJackpotContainerStyles } from './style'
 
-export const ProgressiveJackpot = () => {
+export const ProgressiveJackpotSection = () => {
   const [addNumber, setAddNumber] = useState<number>(0)
   const { data: styleData } = useActiveStyle()
   const { data: languageData } = useActiveLanguage()
@@ -39,7 +39,7 @@ export const ProgressiveJackpot = () => {
         }}
       >
         <p
-          className="mx-auto text-center text-6xl font-bold tracking-widest text-white"
+          className="mx-auto text-center text-2xl font-bold tracking-widest text-white sm:text-4xl md:text-6xl"
           id="jackpot"
           style={{
             color: styles?.jackpot_text_color,

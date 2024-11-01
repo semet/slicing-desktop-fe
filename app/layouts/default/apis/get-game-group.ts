@@ -17,6 +17,6 @@ export const getGameGroupRequest = async (params: Params) => {
     })
     return gameGroupSchema.parse(data)
   } catch (err) {
-    throw new Error('Failed to fetch web settings')
+    throw new Error('Failed to fetch game group')
   }
 }

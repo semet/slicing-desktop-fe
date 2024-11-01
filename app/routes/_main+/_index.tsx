@@ -1,46 +1,67 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
-import { Await, defer, useLoaderData } from '@remix-run/react'
-import { dehydrate, QueryClient } from '@tanstack/react-query'
+import { defer, LoaderFunctionArgs } from '@remix-run/node'
+import { Await, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
 
-import { homeKeys } from '@/factories/home'
 import {
   BannerCarousel,
   BannerCarouselSkeleton,
+  FavoriteGameSection,
+  FavoriteGameSkeleton,
   getBannerCarousel,
-  ProgressiveJackpot
+  getFavoriteGames,
+  PaymentMethods,
+  ProgressiveJackpotSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
-import { parseLanguageFromHeaders } from '@/utils'
+import { checkIfTokenExpires } from '@/libs/token'
+import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
-  const queryClient = new QueryClient()
+  const accessToken = extractCookieFromHeaders(headers, 'token')
+  const isTokenExpires = checkIfTokenExpires(accessToken)
 
-  queryClient.prefetchQuery({
-    queryKey: homeKeys.bannerCarousel,
-    queryFn: async () =>
-      getBannerCarousel({
-        language: language ?? 'id'
-      })
+  const isAuthenticated = accessToken && !isTokenExpires
+
+  const favoriteGames = isAuthenticated
+    ? getFavoriteGames({ accessToken })
+    : null
+
+  const bannersData = getBannerCarousel({
+    language: language ?? 'id'
   })
 
   return defer({
-    dehydratedState: dehydrate(queryClient)
+    bannersData,
+    favoriteGames,
+    isAuthenticated,
+    headers
   })
 }
 
 const Home = () => {
-  const { dehydratedState } = useLoaderData<typeof loader>()
+  const { isAuthenticated, bannersData, favoriteGames } =
+    useLoaderData<typeof loader>()
+
   return (
     <div className="flex flex-col gap-10">
       <Suspense fallback={<BannerCarouselSkeleton />}>
-        <Await resolve={dehydratedState}>
-          <BannerCarousel />
+        <Await resolve={bannersData}>
+          {(bannersData) => <BannerCarousel banners={bannersData} />}
         </Await>
       </Suspense>
-      <ProgressiveJackpot />
+
+      <ProgressiveJackpotSection />
+
+      {isAuthenticated && (
+        <Suspense fallback={<FavoriteGameSkeleton />}>
+          <Await resolve={favoriteGames}>
+            {(favoriteGames) => <FavoriteGameSection games={favoriteGames} />}
+          </Await>
+        </Suspense>
+      )}
+      <PaymentMethods />
     </div>
   )
 }
