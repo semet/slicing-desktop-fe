@@ -1,5 +1,6 @@
 import HttpServer from '@/libs/http-server'
 import { bannerSchema } from '@/schemas/home'
+import { handleError } from '@/utils'
 
 type Params = {
   language: string
@@ -20,7 +21,7 @@ export const getBannerCarousel = async (params: Params) => {
       }
     })
     return bannerSchema.parse(data)
-  } catch (err) {
-    throw new Error('Failed to fetch banner carousel')
+  } catch (error) {
+    handleError(error)
   }
 }

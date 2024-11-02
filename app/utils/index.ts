@@ -1,3 +1,4 @@
+export * from './error'
 export * from './general'
 export * from './hash'
 export * from './parser'

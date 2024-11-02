@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 
 import {
   BannerCarousel,
+  BannerCarouselError,
   BannerCarouselSkeleton,
   FavoriteGameSection,
   FavoriteGameSkeleton,
@@ -82,7 +83,10 @@ const Home = () => {
   return (
     <div className="flex flex-col gap-10">
       <Suspense fallback={<BannerCarouselSkeleton />}>
-        <Await resolve={bannersData}>
+        <Await
+          resolve={bannersData}
+          errorElement={<BannerCarouselError />}
+        >
           {(bannersData) => <BannerCarousel banners={bannersData} />}
         </Await>
       </Suspense>

@@ -7,7 +7,11 @@ import { BannerButton } from '@/features/home'
 import { useEmblaScroll } from '@/hooks'
 import { TBanner } from '@/schemas/home'
 
-export const BannerCarousel: FC<{ banners: TBanner }> = ({ banners }) => {
+type Props = {
+  banners: TBanner
+}
+
+export const BannerCarousel: FC<Props> = ({ banners }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true
