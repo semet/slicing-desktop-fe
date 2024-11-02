@@ -1,10 +1,10 @@
 import HttpServer from '@/libs/http-server'
-import { paymentMethodsSchema } from '@/schemas/home'
+import { banksSchema } from '@/schemas/home'
 
-export const getPaymentMethods = async () => {
+export const getBanks = async () => {
   try {
     const { data } = await HttpServer().get('/banks')
-    return paymentMethodsSchema.parse(data)
+    return banksSchema.parse(data)
   } catch (err) {
     throw new Error('Failed to fetch payment methods')
   }

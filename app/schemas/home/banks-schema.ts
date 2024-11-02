@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const paymentMethodsSchema = z.object({
+export const banksSchema = z.object({
   data: z.array(
     z.object({
       id: z.string(),
@@ -32,5 +32,5 @@ export const paymentMethodsSchema = z.object({
   )
 })
 
-export type TPaymentMethodsResponse = z.infer<typeof paymentMethodsSchema>
-export type TPaymentMethod = z.infer<typeof paymentMethodsSchema>['data'][0]
+export type TBanksResponse = z.infer<typeof banksSchema>
+export type TBank = z.infer<typeof banksSchema>['data'][0]

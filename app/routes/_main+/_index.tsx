@@ -7,9 +7,9 @@ import {
   BannerCarouselSkeleton,
   FavoriteGameSection,
   FavoriteGameSkeleton,
+  getBanks,
   getBannerCarousel,
   getFavoriteGames,
-  getPaymentMethods,
   getPromotion,
   getProviders,
   PaymentMethodsSection,
@@ -44,7 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const bannersData = getBannerCarousel({
     language: language ?? 'id'
   })
-  const paymentMethods = getPaymentMethods()
+  const banks = getBanks()
   const promotions = getPromotion({
     language: language ?? 'id'
   })
@@ -55,7 +55,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       bannersData,
       favoriteGames,
       isAuthenticated,
-      paymentMethods,
+      banks,
       promotions,
       providers
     },
@@ -72,7 +72,7 @@ const Home = () => {
     isAuthenticated,
     bannersData,
     favoriteGames,
-    paymentMethods,
+    banks,
     promotions,
     providers
   } = useLoaderData<typeof loader>()
@@ -95,10 +95,8 @@ const Home = () => {
         </Suspense>
       )}
       <Suspense fallback={null}>
-        <Await resolve={paymentMethods}>
-          {(paymentMethods) => (
-            <PaymentMethodsSection paymentMethods={paymentMethods} />
-          )}
+        <Await resolve={banks}>
+          {(banks) => <PaymentMethodsSection banks={banks} />}
         </Await>
       </Suspense>
       <Suspense fallback={null}>

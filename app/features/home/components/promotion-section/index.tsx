@@ -7,6 +7,5 @@ type Props = {
 }
 
 export const PromotionSection: FC<Props> = ({ promotions }) => {
-  console.log(promotions)
   return <div>PromotionSection</div>
 }

@@ -7,6 +7,5 @@ type Props = {
 }
 
 export const ProvidersSection: FC<Props> = ({ providers }) => {
-  console.log(providers)
   return <div>ProvidersSection</div>
 }

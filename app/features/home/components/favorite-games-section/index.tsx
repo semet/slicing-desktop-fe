@@ -8,7 +8,9 @@ export const FavoriteGameSection: FC<{ games: TFavoriteGames | null }> = ({
 }) => {
   return (
     <div className="flex flex-col items-center gap-6 px-4 xl:px-24">
-      <h2 className="text-center text-lg font-semibold text-white">Favorite</h2>
+      <h2 className="text-center text-lg font-semibold uppercase text-white">
+        Favorite
+      </h2>
       <div className="flex flex-wrap justify-center gap-5">
         {games?.data?.map((game) => (
           <GameCard
