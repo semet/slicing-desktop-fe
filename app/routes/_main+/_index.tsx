@@ -18,6 +18,7 @@ import {
   ProgressiveJackpotSection,
   PromotionSection,
   PromotionSkeleton,
+  ProviderSkeleton,
   ProvidersSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
@@ -110,7 +111,7 @@ const Home = () => {
           {(promotions) => <PromotionSection promotions={promotions} />}
         </Await>
       </Suspense>
-      <Suspense fallback={null}>
+      <Suspense fallback={<ProviderSkeleton />}>
         <Await resolve={providers}>
           {(providers) => <ProvidersSection providers={providers} />}
         </Await>
