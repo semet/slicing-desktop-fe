@@ -1,16 +1,19 @@
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 
-import { useActiveStyle, Deposit, WithDraw } from '@/layouts/default'
+import { useGetPlayer } from '@/features/player'
+import { Deposit, useActiveStyle, WithDraw } from '@/layouts/default'
 import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderBottom = () => {
-  const [isLogin] = useState<boolean>(false)
-  const { data } = useActiveStyle()
+  const { data: playerData } = useGetPlayer()
+  const { data: styleData } = useActiveStyle()
 
-  const style = extractStyle(data?.data).get('desktop_homepage_headerMainBox')
+  const style = extractStyle(styleData?.data).get(
+    'desktop_homepage_headerMainBox'
+  )
   return (
     <Fragment>
-      {isLogin ? (
+      {playerData !== undefined ? (
         <div
           className="flex justify-end gap-4 px-6 py-2"
           style={
