@@ -12,9 +12,11 @@ import {
   getFavoriteGames,
   getPromotion,
   getProviders,
+  PaymentMethodSkeleton,
   PaymentMethodsSection,
   ProgressiveJackpotSection,
   PromotionSection,
+  PromotionSkeleton,
   ProvidersSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
@@ -94,12 +96,12 @@ const Home = () => {
           </Await>
         </Suspense>
       )}
-      <Suspense fallback={null}>
+      <Suspense fallback={<PaymentMethodSkeleton />}>
         <Await resolve={banks}>
           {(banks) => <PaymentMethodsSection banks={banks} />}
         </Await>
       </Suspense>
-      <Suspense fallback={null}>
+      <Suspense fallback={<PromotionSkeleton />}>
         <Await resolve={promotions}>
           {(promotions) => <PromotionSection promotions={promotions} />}
         </Await>

@@ -5,7 +5,7 @@ export const FavoriteGameSkeleton = () => {
       <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
-            className="flex h-32 min-w-full flex-col gap-3 overflow-hidden rounded-md bg-red-500"
+            className="flex h-32 min-w-full flex-col gap-3 overflow-hidden rounded-md"
             key={index}
           >
             <div className="h-full w-full animate-pulse bg-gray-300" />

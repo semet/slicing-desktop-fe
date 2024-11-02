@@ -17,5 +17,5 @@ export const promotionSchema = z.object({
   )
 })
 
-export type TPromotionResponse = z.infer<typeof schema>
-export type TPromotion = z.infer<typeof schema>['data'][0]
+export type TPromotionResponse = z.infer<typeof promotionSchema>
+export type TPromotion = z.infer<typeof promotionSchema>['data'][0]

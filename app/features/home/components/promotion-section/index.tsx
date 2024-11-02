@@ -1,5 +1,6 @@
 import { FC } from 'react'
 
+import { PromotionCard, SectionContainer } from '@/features/home'
 import { TPromotionResponse } from '@/schemas/home'
 
 type Props = {
@@ -7,5 +8,14 @@ type Props = {
 }
 
 export const PromotionSection: FC<Props> = ({ promotions }) => {
-  return <div>PromotionSection</div>
+  return (
+    <SectionContainer title="Hadiah & Promosi">
+      {promotions?.data?.map((promotion) => (
+        <PromotionCard
+          promotion={promotion}
+          key={promotion.id}
+        />
+      ))}
+    </SectionContainer>
+  )
 }
