@@ -2,7 +2,6 @@ import { LoaderFunctionArgs } from '@remix-run/node'
 import { json, Outlet, useLoaderData } from '@remix-run/react'
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 
-import { LayoutProvider } from '@/contexts'
 import { generalKeys } from '@/factories/general'
 import { playersKeys } from '@/factories/players'
 import { getPlayerRequest } from '@/features/player'
@@ -21,6 +20,7 @@ import {
 } from '@/layouts/default'
 import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
+import { TDesktopStyleData } from '@/schemas/general'
 import { TPlayerResponse } from '@/schemas/player'
 import { extractCookieFromHeaders, extractStyle } from '@/utils'
 
@@ -29,7 +29,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
 
-  const styleData = await getStyleRequest()
   const queryClient = new QueryClient()
   let playerData: TPlayerResponse | undefined
   await queryClient.prefetchQuery({
@@ -39,6 +38,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         action: 'login'
       })
   })
+
   if (accessToken && !isTokenExpires) {
     await queryClient.prefetchQuery({
       queryKey: playersKeys.player,
@@ -56,11 +56,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
           'idr'
       })
   })
+  await queryClient.prefetchQuery({
+    queryKey: generalKeys.activeStyle,
+    queryFn: getStyleRequest
+  })
 
   return json(
     {
       dehydratedState: dehydrate(queryClient),
-      styleData
+      styleData: queryClient.getQueryData<TDesktopStyleData>(
+        generalKeys.activeStyle
+      )
     },
     {
       headers: {
@@ -74,28 +80,26 @@ const DefaultLayoutRoute = () => {
   const { styleData } = useLoaderData<typeof loader>()
   const style = extractStyle(styleData?.data).get('desktop_homepage_body')
   return (
-    <LayoutProvider styles={styleData}>
-      <main
-        className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${style?.background_body_image})`
-        }}
-      >
-        <HeaderPrimary>
-          <HeaderTop />
-          <HeaderCenter />
-          <HeaderBottom />
-          <HeaderSecondary />
-        </HeaderPrimary>
-        <div className="min-h-screen">
-          <Outlet />
-        </div>
-        <FooterContainer>
-          <FooterLeft />
-          <FooterRight />
-        </FooterContainer>
-      </main>
-    </LayoutProvider>
+    <main
+      className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url(${style?.background_body_image})`
+      }}
+    >
+      <HeaderPrimary>
+        <HeaderTop />
+        <HeaderCenter />
+        <HeaderBottom />
+        <HeaderSecondary />
+      </HeaderPrimary>
+      <div className="min-h-screen">
+        <Outlet />
+      </div>
+      <FooterContainer>
+        <FooterLeft />
+        <FooterRight />
+      </FooterContainer>
+    </main>
   )
 }
 
