@@ -19,6 +19,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { getClientLocales } from 'remix-utils/locales/server'
 import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
 
@@ -47,6 +48,7 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
+  const locales = getClientLocales(request)
 
   const queryClient = new QueryClient()
 
@@ -63,9 +65,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     queryKey: generalKeys.language,
     queryFn: () => getLanguageSettingsRequest({ lang: language })
   })
-
   return json({
     dehydratedState: dehydrate(queryClient),
+    locales,
     ENV: {
       API_URL: process.env.API_URL,
       API_KEY: process.env.API_KEY

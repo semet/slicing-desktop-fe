@@ -42,7 +42,7 @@ export const playerSchema = z.object({
           id: z.string(),
           name: z.string(),
           code: z.string(),
-          image_name: z.string(),
+          image_name: z.string().or(z.null()),
           price_per_coin: z.number(),
           status: z.number()
         })
@@ -54,4 +54,5 @@ export const playerSchema = z.object({
   })
 })
 
-export type TPlayer = z.infer<typeof playerSchema>
+export type TPlayerResponse = z.infer<typeof playerSchema>
+export type TPlayer = TPlayerResponse['data']

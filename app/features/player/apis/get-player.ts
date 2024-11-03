@@ -1,6 +1,7 @@
 import { decodeJwt } from 'jose'
 
 import HttpServer from '@/libs/http-server'
+import { playerSchema } from '@/schemas/player'
 import { TParamsWithToken } from '@/types'
 
 type Params = TParamsWithToken
@@ -12,7 +13,7 @@ export const getPlayerRequest = async (params: Params) => {
 
   try {
     const { data } = await HttpServer(accessToken).get(`/players/${playerId}`)
-    return data
+    return playerSchema.parse(data)
   } catch (err) {
     throw new Error('Failed to get Player Data')
   }

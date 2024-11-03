@@ -1,7 +1,8 @@
 import { LoaderFunctionArgs } from '@remix-run/node'
-import { defer, Outlet, useLoaderData } from '@remix-run/react'
+import { json, Outlet, useLoaderData } from '@remix-run/react'
 import { dehydrate, QueryClient } from '@tanstack/react-query'
 
+import { LayoutProvider } from '@/contexts'
 import { generalKeys } from '@/factories/general'
 import { playersKeys } from '@/factories/players'
 import { getPlayerRequest } from '@/features/player'
@@ -20,8 +21,7 @@ import {
 } from '@/layouts/default'
 import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
-import { TDesktopStyleData } from '@/schemas/general'
-import { TPlayer } from '@/schemas/player'
+import { TPlayerResponse } from '@/schemas/player'
 import { extractCookieFromHeaders, extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -29,8 +29,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
 
+  const styleData = await getStyleRequest()
   const queryClient = new QueryClient()
-  let playerData: TPlayer | undefined
+  let playerData: TPlayerResponse | undefined
   await queryClient.prefetchQuery({
     queryKey: generalKeys.captcha,
     queryFn: () =>
@@ -43,13 +44,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       queryKey: playersKeys.player,
       queryFn: () => getPlayerRequest({ accessToken })
     })
-    playerData = queryClient.getQueryData<TPlayer>(playersKeys.player)
+    playerData = queryClient.getQueryData<TPlayerResponse>(playersKeys.player)
   }
-
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.activeStyle,
-    queryFn: getStyleRequest
-  })
 
   await queryClient.prefetchQuery({
     queryKey: generalKeys.gameGroup(),
@@ -61,12 +57,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       })
   })
 
-  return defer(
+  return json(
     {
       dehydratedState: dehydrate(queryClient),
-      styleData: queryClient.getQueryData<TDesktopStyleData>(
-        generalKeys.activeStyle
-      )
+      styleData
     },
     {
       headers: {
@@ -80,26 +74,28 @@ const DefaultLayoutRoute = () => {
   const { styleData } = useLoaderData<typeof loader>()
   const style = extractStyle(styleData?.data).get('desktop_homepage_body')
   return (
-    <main
-      className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url(${style?.background_body_image})`
-      }}
-    >
-      <HeaderPrimary>
-        <HeaderTop />
-        <HeaderCenter />
-        <HeaderBottom />
-        <HeaderSecondary />
-      </HeaderPrimary>
-      <div className="min-h-screen">
-        <Outlet />
-      </div>
-      <FooterContainer>
-        <FooterLeft />
-        <FooterRight />
-      </FooterContainer>
-    </main>
+    <LayoutProvider styles={styleData}>
+      <main
+        className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${style?.background_body_image})`
+        }}
+      >
+        <HeaderPrimary>
+          <HeaderTop />
+          <HeaderCenter />
+          <HeaderBottom />
+          <HeaderSecondary />
+        </HeaderPrimary>
+        <div className="min-h-screen">
+          <Outlet />
+        </div>
+        <FooterContainer>
+          <FooterLeft />
+          <FooterRight />
+        </FooterContainer>
+      </main>
+    </LayoutProvider>
   )
 }
 

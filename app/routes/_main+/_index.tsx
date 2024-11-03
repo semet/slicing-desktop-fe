@@ -21,6 +21,7 @@ import {
   ProviderSkeleton,
   ProvidersSection
 } from '@/features/home'
+import { getPlayerRequest } from '@/features/player'
 import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
 import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
@@ -40,7 +41,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const isTokenExpires = checkIfTokenExpires(accessToken)
 
   const isAuthenticated = accessToken && !isTokenExpires
-
+  const player = isAuthenticated
+    ? await getPlayerRequest({ accessToken })
+    : null
   const favoriteGames = isAuthenticated
     ? getFavoriteGames({ accessToken })
     : null
@@ -50,8 +53,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   })
   const banks = getBanks()
   const promotions = getPromotion({
-    language: language ?? 'id'
+    language: language ?? 'id',
+    currency:
+      player?.data?.account?.bank?.currency?.code.toLowerCase() || 'idr',
+    limit: 10
   })
+
   const providers = getProviders()
 
   return defer(
