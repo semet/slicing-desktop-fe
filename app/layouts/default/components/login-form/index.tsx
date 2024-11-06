@@ -47,7 +47,8 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
     resolver: zodResolver(loginSchema)
   })
 
-  const { handleSubmit } = formMethods
+  const { handleSubmit, setValue } = formMethods
+
   const fetcher = useFetcher<{ success: boolean; message: string }>()
 
   useEffect(() => {
@@ -83,6 +84,11 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
       action: '/login'
     })
   })
+  useEffect(() => {
+    if (!captchaData) return
+    setValue('captcha_id', captchaData?.data?.captcha_id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [captchaData])
 
   const loginStylesRaw = extractStyle(styles).get('desktop_button_login')
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
