@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  ShouldRevalidateFunction,
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
@@ -90,6 +91,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       API_KEY: process.env.API_KEY
     }
   })
+}
+
+export const shouldRevalidate: ShouldRevalidateFunction = () => {
+  return false
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

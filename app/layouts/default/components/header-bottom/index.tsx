@@ -1,11 +1,11 @@
 import { Fragment } from 'react'
 
-import { useLayout, useStyle } from '@/contexts'
+import { useStyle, useUser } from '@/contexts'
 import { Deposit, WithDraw } from '@/layouts/default'
 import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderBottom = () => {
-  const { player } = useLayout()
+  const { player } = useUser()
   const { styles: styleData } = useStyle()
 
   const style = extractStyle(styleData).get('desktop_homepage_headerMainBox')

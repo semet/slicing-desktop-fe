@@ -1,4 +1,4 @@
-import { useLayout } from '@/contexts'
+import { useLayout, useUser } from '@/contexts'
 import {
   PromotionCard,
   SectionContainer,
@@ -6,7 +6,8 @@ import {
 } from '@/features/home'
 
 export const PromotionSection = () => {
-  const { language, player } = useLayout()
+  const { language } = useLayout()
+  const { player } = useUser()
   const { data: promotions } = useGetPromotion({
     language: language ?? 'id',
     currency: player?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'

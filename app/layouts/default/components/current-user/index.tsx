@@ -1,10 +1,10 @@
 import { FaCrown } from 'react-icons/fa'
 import { HiUserCircle } from 'react-icons/hi'
 
-import { useLayout } from '@/contexts'
+import { useUser } from '@/contexts'
 
 export const CurrentUser = () => {
-  const { player } = useLayout()
+  const { player } = useUser()
 
   return (
     <div className="flex items-center gap-2">

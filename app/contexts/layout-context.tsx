@@ -1,32 +1,20 @@
 import { createContext, FC, ReactNode, useContext } from 'react'
 
-import {
-  TGameGroupResponse,
-  TLanguageSettings,
-  TWebMeta,
-  TWebSetting
-} from '@/schemas/general'
-import { TPlayer } from '@/schemas/player'
+import { TLanguageSettings, TWebMeta, TWebSetting } from '@/schemas/general'
 
 type LayoutContextType = {
-  player?: TPlayer
   webSettings: TWebSetting
   webMeta: TWebMeta
-  gameGroup: Promise<TGameGroupResponse>
   languageSettings: Promise<TLanguageSettings>
-  accessToken?: string
   language?: string
 }
 
 type ProviderProps = {
   children: ReactNode
   data: {
-    player?: TPlayer
     webSettings: TWebSetting
     webMeta: TWebMeta
-    gameGroup: Promise<TGameGroupResponse>
     languageSettings: Promise<TLanguageSettings>
-    accessToken?: string
     language?: string
   }
 }
