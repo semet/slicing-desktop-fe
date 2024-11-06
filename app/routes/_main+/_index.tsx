@@ -1,5 +1,9 @@
 import { defer, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { Await, useLoaderData } from '@remix-run/react'
+import {
+  Await,
+  ShouldRevalidateFunction,
+  useLoaderData
+} from '@remix-run/react'
 import { Suspense } from 'react'
 
 import {
@@ -38,7 +42,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
   const isAuthenticated = accessToken && !isTokenExpires
-
   const favoriteGames = isAuthenticated
     ? getFavoriteGames({ accessToken })
     : null
@@ -49,7 +52,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const banks = getBanks()
 
   const providers = getProviders()
-
   return defer(
     {
       bannersData,
@@ -64,6 +66,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       }
     }
   )
+}
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+  actionResult,
+  formAction,
+  defaultShouldRevalidate
+}) => {
+  const formActions = ['/login', '/logout']
+  if (!formAction) return false
+
+  if (formActions.includes(formAction) && 'success' in actionResult)
+    return defaultShouldRevalidate
+  return true
 }
 
 const Home = () => {

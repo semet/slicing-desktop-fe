@@ -51,7 +51,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const companyBankAccounts = await getCompanyBankAccounts({
     accessToken
   })
-
   return json(
     {
       bankByCurrency,

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useFetcher } from '@remix-run/react'
+import { Link, useFetcher, useNavigate } from '@remix-run/react'
 import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
@@ -50,10 +50,10 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
   const { handleSubmit, setValue } = formMethods
 
   const fetcher = useFetcher<{ success: boolean; message: string }>()
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data?.success) {
-      fetcher.load('/')
+      navigate('.', { replace: true })
       onCLose()
     }
 

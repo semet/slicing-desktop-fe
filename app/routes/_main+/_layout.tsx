@@ -30,7 +30,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
   let playerData: TPlayerResponse | undefined
-
   const gameGroup = getGameGroupRequest({
     currency:
       playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
@@ -38,7 +37,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (accessToken && !isTokenExpires) {
     playerData = await getPlayerRequest({ accessToken })
   }
-
   return defer({
     accessToken,
     gameGroup,
@@ -56,8 +54,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
   if (formActions.includes(formAction) && 'success' in actionResult)
     return defaultShouldRevalidate
-
-  return false
+  return true
 }
 
 const DefaultLayoutRoute = () => {

@@ -24,17 +24,13 @@ import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
 
 import { LayoutProvider, StyleProvider } from './contexts'
-import { getPlayerRequest } from './features/player'
 import {
-  getGameGroupRequest,
   getLanguageSettingsRequest,
   getStyleRequest,
   getWebMetasRequest,
   getWebSettingsRequest
 } from './layouts/default'
-import { checkIfTokenExpires } from './libs/token'
-import { TPlayerResponse } from './schemas/player'
-import { extractCookieFromHeaders, parseLanguageFromHeaders } from './utils'
+import { parseLanguageFromHeaders } from './utils'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -53,37 +49,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locales = getClientLocales(request)
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
-  const accessToken = extractCookieFromHeaders(headers, 'token')
-  const isTokenExpires = checkIfTokenExpires(accessToken)
-
-  let playerData: TPlayerResponse | undefined
 
   const languageSettings = getLanguageSettingsRequest({
     lang: language
   })
-  const gameGroup = getGameGroupRequest({
-    currency:
-      playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
-  })
-  if (accessToken && !isTokenExpires) {
-    playerData = await getPlayerRequest({ accessToken })
-  }
-
   const styles = await getStyleRequest()
 
   const webSettings = await getWebSettingsRequest()
   const webMeta = await getWebMetasRequest()
 
   return defer({
-    accessToken,
     language,
-    player: playerData?.data,
     styles: styles.data,
     webMeta: webMeta.data,
     webSettings: webSettings.data,
     // game group and language settings are not resolver yet, so we send the entire promise to the context
     // let the component handle the promise using Suspense and Await
-    gameGroup,
     languageSettings,
     locales,
     ENV: {
