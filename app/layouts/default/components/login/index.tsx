@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { ModalDialog } from '@/components/ui'
-import { LoginForm, useActiveStyle } from '@/layouts/default'
+import { useStyle } from '@/contexts'
+import { LoginForm } from '@/layouts/default'
 import { extractStyle } from '@/utils'
 
 import css from './index.module.css'
@@ -11,12 +12,10 @@ import { makeLoginButtonStyle, makeRegisterButtonStyle } from './style'
 
 export const Login = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { data } = useActiveStyle()
+  const { styles } = useStyle()
 
-  const loginStylesRaw = extractStyle(data?.data).get('desktop_button_login')
-  const registerStylesRaw = extractStyle(data?.data).get(
-    'desktop_button_register'
-  )
+  const loginStylesRaw = extractStyle(styles).get('desktop_button_login')
+  const registerStylesRaw = extractStyle(styles).get('desktop_button_register')
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
   const registerButtonStyle = makeRegisterButtonStyle(registerStylesRaw)
   return (

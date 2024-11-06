@@ -1,23 +1,41 @@
 import { createContext, FC, ReactNode, useContext } from 'react'
 
-import { TDesktopStyleData } from '@/schemas/general'
+import {
+  TGameGroupResponse,
+  TLanguageSettings,
+  TWebMeta,
+  TWebSetting
+} from '@/schemas/general'
+import { TPlayer } from '@/schemas/player'
 
 type LayoutContextType = {
-  styles: TDesktopStyleData
+  player?: TPlayer
+  webSettings: TWebSetting
+  webMeta: TWebMeta
+  gameGroup: Promise<TGameGroupResponse>
+  languageSettings: Promise<TLanguageSettings>
+  accessToken?: string
+  language?: string
 }
 
 type ProviderProps = {
   children: ReactNode
-  styles: TDesktopStyleData
+  data: {
+    player?: TPlayer
+    webSettings: TWebSetting
+    webMeta: TWebMeta
+    gameGroup: Promise<TGameGroupResponse>
+    languageSettings: Promise<TLanguageSettings>
+    accessToken?: string
+    language?: string
+  }
 }
 
 const LayoutContext = createContext<LayoutContextType | null>(null)
 
-const LayoutProvider: FC<ProviderProps> = ({ children, styles }) => {
+const LayoutProvider: FC<ProviderProps> = ({ children, data }) => {
   return (
-    <LayoutContext.Provider value={{ styles }}>
-      {children}
-    </LayoutContext.Provider>
+    <LayoutContext.Provider value={data}>{children}</LayoutContext.Provider>
   )
 }
 

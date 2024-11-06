@@ -1,19 +1,17 @@
 import { Fragment } from 'react'
 
-import { useGetPlayer } from '@/features/player'
-import { Deposit, useActiveStyle, WithDraw } from '@/layouts/default'
+import { useLayout, useStyle } from '@/contexts'
+import { Deposit, WithDraw } from '@/layouts/default'
 import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderBottom = () => {
-  const { data: playerData } = useGetPlayer()
-  const { data: styleData } = useActiveStyle()
+  const { player } = useLayout()
+  const { styles: styleData } = useStyle()
 
-  const style = extractStyle(styleData?.data).get(
-    'desktop_homepage_headerMainBox'
-  )
+  const style = extractStyle(styleData).get('desktop_homepage_headerMainBox')
   return (
     <Fragment>
-      {playerData !== undefined ? (
+      {player !== undefined ? (
         <div
           className="flex justify-end gap-4 px-6 py-2"
           style={

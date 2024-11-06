@@ -1,17 +1,15 @@
 import { twMerge } from 'tailwind-merge'
 
-import { useActiveStyle } from '@/layouts/default'
+import { useStyle } from '@/contexts'
 import { extractStyle } from '@/utils'
 
 import css from './index.module.css'
 import { makeRegisterButtonStyle } from './style'
 
 export const Register = () => {
-  const { data } = useActiveStyle()
+  const { styles } = useStyle()
 
-  const registerStylesRaw = extractStyle(data?.data).get(
-    'desktop_button_register'
-  )
+  const registerStylesRaw = extractStyle(styles).get('desktop_button_register')
   const registerButtonStyle = makeRegisterButtonStyle(registerStylesRaw)
   return (
     <button

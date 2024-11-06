@@ -652,5 +652,5 @@ export const styleSchema = z.object({
   })
 })
 
-export type DesktopStyle = z.infer<typeof styleSchema>['data']
-export type TDesktopStyleData = z.infer<typeof styleSchema>
+export type TStyle = z.infer<typeof styleSchema>['data']
+export type TStyleResponse = z.infer<typeof styleSchema>

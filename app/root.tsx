@@ -1,6 +1,6 @@
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
-  json,
+  defer,
   Links,
   Meta,
   Outlet,
@@ -10,7 +10,6 @@ import {
   useRouteError
 } from '@remix-run/react'
 import {
-  dehydrate,
   HydrationBoundary,
   QueryClient,
   QueryClientProvider
@@ -23,14 +22,18 @@ import { getClientLocales } from 'remix-utils/locales/server'
 import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
 
-import { generalKeys } from './factories/general'
+import { LayoutProvider, StyleProvider } from './contexts'
+import { getPlayerRequest } from './features/player'
 import {
+  getGameGroupRequest,
   getLanguageSettingsRequest,
+  getStyleRequest,
   getWebMetasRequest,
   getWebSettingsRequest
 } from './layouts/default'
-import { TWebSettings } from './schemas/general'
-import { parseLanguageFromHeaders } from './utils'
+import { checkIfTokenExpires } from './libs/token'
+import { TPlayerResponse } from './schemas/player'
+import { extractCookieFromHeaders, parseLanguageFromHeaders } from './utils'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -46,40 +49,51 @@ export const links: LinksFunction = () => [
 ]
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const locales = getClientLocales(request)
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
-  const locales = getClientLocales(request)
+  const accessToken = extractCookieFromHeaders(headers, 'token')
+  const isTokenExpires = checkIfTokenExpires(accessToken)
 
-  const queryClient = new QueryClient()
+  let playerData: TPlayerResponse | undefined
 
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.webSettings,
-    queryFn: getWebSettingsRequest
+  const languageSettings = getLanguageSettingsRequest({
+    lang: language
   })
+  const gameGroup = getGameGroupRequest({
+    currency:
+      playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
+  })
+  if (accessToken && !isTokenExpires) {
+    playerData = await getPlayerRequest({ accessToken })
+  }
 
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.webMeta,
-    queryFn: getWebMetasRequest
-  })
-  await queryClient.prefetchQuery({
-    queryKey: generalKeys.language,
-    queryFn: () => getLanguageSettingsRequest({ lang: language })
-  })
-  return json({
-    dehydratedState: dehydrate(queryClient),
+  const styles = await getStyleRequest()
+
+  const webSettings = await getWebSettingsRequest()
+  const webMeta = await getWebMetasRequest()
+
+  return defer({
+    accessToken,
+    language,
+    player: playerData?.data,
+    styles: styles.data,
+    webMeta: webMeta.data,
+    webSettings: webSettings.data,
+    // game group and language settings are not resolver yet, so we send the entire promise to the context
+    // let the component handle the promise using Suspense and Await
+    gameGroup,
+    languageSettings,
     locales,
     ENV: {
       API_URL: process.env.API_URL,
       API_KEY: process.env.API_KEY
-    },
-    webSettingsData: queryClient.getQueryData<TWebSettings>(
-      generalKeys.webSettings
-    )
+    }
   })
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { ENV, webSettingsData } = useLoaderData<typeof loader>()
+  const { ENV, webSettings } = useLoaderData<typeof loader>()
   return (
     <html
       lang="en"
@@ -93,7 +107,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         ></meta>
         <script
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${webSettingsData?.data?.web_google_analytics.value}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${webSettings?.web_google_analytics.value}`}
         />
         <script
           dangerouslySetInnerHTML={{
@@ -101,7 +115,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${webSettingsData?.data?.web_google_analytics.value}', {
+                  gtag('config', '${webSettings?.web_google_analytics.value}', {
                     page_path: window.location.pathname,
                   });
                 `
@@ -125,6 +139,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { styles, ...rest } = useLoaderData<typeof loader>()
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -144,7 +160,11 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
-        <Outlet />
+        <StyleProvider styles={styles}>
+          <LayoutProvider data={rest}>
+            <Outlet />
+          </LayoutProvider>
+        </StyleProvider>
       </HydrationBoundary>
       <ToastContainer />
       <ReactQueryDevtools initialIsOpen={false} />

@@ -8,13 +8,13 @@ import {
   DpQrisIcon,
   DpVaIcon
 } from '@/components/icons'
+import { useLayout } from '@/contexts'
 import {
   DepositBankForm,
   DepositCryptoForm,
   DepositQrisForm,
   DepositVaForm
 } from '@/features/deposit'
-import { useWebSettings } from '@/layouts/default'
 import {
   TBankByCurrencyResponse,
   TBanksByCurrency,
@@ -40,7 +40,7 @@ export type TabItem = {
 
 export const useDepositTabs = (params: Params) => {
   const { bankByCurrency, companyBankAccounts, player, promotions } = params
-  const { data: webSettingsData } = useWebSettings()
+  const { webSettings } = useLayout()
 
   const groupedBanks = useMemo(() => {
     return bankByCurrency?.data
@@ -81,7 +81,7 @@ export const useDepositTabs = (params: Params) => {
   const tabItems = useMemo<TabItem[]>(() => {
     const items: TabItem[] = []
     if (
-      webSettingsData?.data?.payment_bank?.value === 'true' &&
+      webSettings?.payment_bank?.value === 'true' &&
       groupedBanks?.BANK?.length &&
       groupedCompanyBanks?.BANK?.length
     ) {
@@ -103,7 +103,7 @@ export const useDepositTabs = (params: Params) => {
     }
 
     if (
-      webSettingsData?.data?.payment_qris?.value === 'true' &&
+      webSettings?.payment_qris?.value === 'true' &&
       groupedBanks?.QRIS?.length &&
       groupedCompanyBanks?.QRIS?.length
     ) {
@@ -121,7 +121,7 @@ export const useDepositTabs = (params: Params) => {
     }
 
     if (
-      webSettingsData?.data?.payment_va?.value === 'true' &&
+      webSettings?.payment_va?.value === 'true' &&
       groupedBanks?.VA?.length &&
       groupedCompanyBanks?.VA?.length
     ) {
@@ -140,7 +140,7 @@ export const useDepositTabs = (params: Params) => {
     }
 
     if (
-      webSettingsData?.data?.payment_ewallet?.value === 'true' &&
+      webSettings?.payment_ewallet?.value === 'true' &&
       groupedBanks?.EWALLET?.length &&
       groupedCompanyBanks?.EWALLET?.length
     ) {
@@ -162,7 +162,7 @@ export const useDepositTabs = (params: Params) => {
     }
 
     if (
-      webSettingsData?.data?.payment_phone_credit?.value === 'true' &&
+      webSettings?.payment_phone_credit?.value === 'true' &&
       groupedBanks?.PULSA?.length &&
       groupedCompanyBanks?.PULSA?.length
     ) {
@@ -184,7 +184,7 @@ export const useDepositTabs = (params: Params) => {
     }
 
     if (
-      webSettingsData?.data?.payment_crypto?.value === 'true' &&
+      webSettings?.payment_crypto?.value === 'true' &&
       groupedBanks?.CRYPTO?.length &&
       groupedCompanyBanks?.CRYPTO?.length
     ) {
@@ -205,7 +205,7 @@ export const useDepositTabs = (params: Params) => {
 
     return items
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [webSettingsData?.data, groupedBanks, groupedCompanyBanks])
+  }, [webSettings, groupedBanks, groupedCompanyBanks])
 
   return {
     tabItems,

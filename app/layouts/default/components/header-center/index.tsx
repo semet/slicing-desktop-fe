@@ -1,14 +1,11 @@
-import {
-  HeaderCenterLeft,
-  HeaderCenterRight,
-  useActiveStyle
-} from '@/layouts/default'
+import { useStyle } from '@/contexts'
+import { HeaderCenterLeft, HeaderCenterRight } from '@/layouts/default'
 import { convertHex, extractStyle } from '@/utils'
 
 export const HeaderCenter = () => {
-  const { data } = useActiveStyle()
+  const { styles } = useStyle()
 
-  const style = extractStyle(data?.data).get('desktop_homepage_header')
+  const style = extractStyle(styles).get('desktop_homepage_header')
   return (
     <div
       style={

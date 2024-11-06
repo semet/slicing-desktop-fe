@@ -1,9 +1,9 @@
 import { TfiReload } from 'react-icons/tfi'
 
-import { useGetPlayer } from '@/features/player'
+import { useLayout } from '@/contexts'
 
 export const CoinStatus = () => {
-  const { data } = useGetPlayer()
+  const { player } = useLayout()
   return (
     <div className="flex items-center rounded bg-white px-2 py-1">
       <img
@@ -14,7 +14,7 @@ export const CoinStatus = () => {
       />
 
       <div className="flex-1 flex-shrink flex-grow px-2 font-semibold">
-        {data?.data?.main_wallet?.balance}
+        {player?.main_wallet?.balance}
       </div>
 
       <button>

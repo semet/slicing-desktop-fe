@@ -12,4 +12,5 @@ export const webMetasSchema = z.object({
   })
 })
 
-export type TWebMetas = z.infer<typeof webMetasSchema>
+export type TWebMetaResponse = z.infer<typeof webMetasSchema>
+export type TWebMeta = TWebMetaResponse['data']

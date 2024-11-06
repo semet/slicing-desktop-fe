@@ -1,10 +1,10 @@
 import { CSSProperties } from 'react'
 
-import { DesktopStyle } from '@/schemas/general'
+import { TStyle } from '@/schemas/general'
 import { convertHex } from '@/utils'
 
 export const makeLoginButtonStyle = (
-  styles?: DesktopStyle['desktop_button_login']
+  styles?: TStyle['desktop_button_login']
 ): CSSProperties => {
   return {
     '--login-text-color': convertHex(
@@ -31,7 +31,7 @@ export const makeLoginButtonStyle = (
 }
 
 export const makeRegisterButtonStyle = (
-  styles?: DesktopStyle['desktop_button_register']
+  styles?: TStyle['desktop_button_register']
 ): CSSProperties => {
   return {
     '--register-text-color': convertHex(

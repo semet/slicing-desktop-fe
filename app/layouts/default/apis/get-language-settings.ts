@@ -6,7 +6,12 @@ export const getLanguageSettingsRequest = async (params: { lang?: string }) => {
 
   const defaultLang = lang || 'en'
   try {
-    const { data } = await HttpServer().get(`languages/${defaultLang}/setting`)
+    const { data } = await HttpServer().get(
+      `languages/${defaultLang}/setting`,
+      {
+        cache: 'force-cache'
+      }
+    )
     return languageSettingsSchema.parse(data)
   } catch {
     throw new Error('Failed to fetch language settings')

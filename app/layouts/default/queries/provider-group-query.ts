@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { useLayout } from '@/contexts'
 import { generalKeys } from '@/factories/general'
-import { useGetPlayer } from '@/features/player'
 import { getProviderGroupRequest } from '@/layouts/default'
 
 type Params = {
@@ -12,9 +12,8 @@ type Params = {
 export const useProviderGroup = (params: Params) => {
   const { code, provider_name } = params
 
-  const { data: player } = useGetPlayer()
-  const currency =
-    player?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
+  const { player } = useLayout()
+  const currency = player?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
   return useQuery({
     queryKey: generalKeys.providerGroup(code),
     queryFn: () =>

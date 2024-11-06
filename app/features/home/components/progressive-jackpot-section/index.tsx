@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+import { Await } from '@remix-run/react'
+import { Suspense, useEffect, useState } from 'react'
 
-import { useActiveLanguage, useActiveStyle } from '@/layouts/default'
+import { useLayout, useStyle } from '@/contexts'
 import { currencyFormatter, extractStyle } from '@/utils'
 
 import { makeJackpotContainerStyles } from './style'
 
 export const ProgressiveJackpotSection = () => {
   const [addNumber, setAddNumber] = useState<number>(0)
-  const { data: styleData } = useActiveStyle()
-  const { data: languageData } = useActiveLanguage()
-
+  const { languageSettings } = useLayout()
+  const { styles: styleData } = useStyle()
   useEffect(() => {
     const interval = setInterval(() => {
       const epochTimeInMilliseconds = Math.floor(Date.now() / 1000)
@@ -22,7 +22,7 @@ export const ProgressiveJackpotSection = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const styles = extractStyle(styleData?.data).get(
+  const styles = extractStyle(styleData).get(
     'desktop_homepage_progressiveJackpot'
   )
   const jackpotContainerStyles = makeJackpotContainerStyles(styles)
@@ -47,10 +47,18 @@ export const ProgressiveJackpotSection = () => {
               '2px 0 #A80C14, -2px 0 #A80C14, 0 2px #A80C14, 0 -2px #A80C14, 1px 1px #A80C14, -1px -1px #A80C14, 1px -1px #A80C14, -1px 1px #A80C14, 8px 2px 0px #000'
           }}
         >
-          {addNumber &&
-            currencyFormatter(
-              Number(languageData?.data?.progresive_jackpot) + addNumber
-            )}
+          <Suspense fallback={null}>
+            <Await resolve={languageSettings}>
+              {(language) => (
+                <>
+                  {addNumber &&
+                    currencyFormatter(
+                      Number(language?.data?.progresive_jackpot) + addNumber
+                    )}
+                </>
+              )}
+            </Await>
+          </Suspense>
         </p>
       </div>
     </div>

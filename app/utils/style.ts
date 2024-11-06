@@ -1,13 +1,13 @@
-import { DesktopStyle } from '@/schemas/general'
+import { TStyle } from '@/schemas/general'
 
-export const extractStyle = (styles?: DesktopStyle) => {
+export const extractStyle = (styles?: TStyle) => {
   if (!styles) {
     return {
       get: () => undefined
     }
   }
   return {
-    get<K extends keyof DesktopStyle>(key: K): DesktopStyle[K] {
+    get<K extends keyof TStyle>(key: K): TStyle[K] {
       return styles[key]
     }
   }

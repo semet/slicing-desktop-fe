@@ -1,15 +1,13 @@
 import { FC } from 'react'
 
-import { useActiveStyle } from '@/layouts/default'
+import { useStyle } from '@/contexts'
 import { TProviderGroup } from '@/schemas/general'
 import { convertHex, extractStyle } from '@/utils'
 
 export const PlayNowCard: FC<TProviderGroup> = ({ image_desktop }) => {
-  const { data } = useActiveStyle()
+  const { styles: data } = useStyle()
 
-  const styles = extractStyle(data?.data).get(
-    'desktop_homepage_gameCategoryContent'
-  )
+  const styles = extractStyle(data).get('desktop_homepage_gameCategoryContent')
 
   return (
     <div

@@ -1,7 +1,10 @@
-import { useGetPlayer } from '@/features/player'
+import { useLayout } from '@/contexts'
 import { AccountInfo, Authentication } from '@/layouts/default'
 
 export const HeaderCenterRight = () => {
-  const { data } = useGetPlayer()
-  return <div>{data !== undefined ? <AccountInfo /> : <Authentication />}</div>
+  const { player } = useLayout()
+
+  return (
+    <div>{player !== undefined ? <AccountInfo /> : <Authentication />}</div>
+  )
 }

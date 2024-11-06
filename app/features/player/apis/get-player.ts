@@ -12,7 +12,9 @@ export const getPlayerRequest = async (params: Params) => {
   const playerId = decodedToken ? decodedToken.aud : undefined
 
   try {
-    const { data } = await HttpServer(accessToken).get(`/players/${playerId}`)
+    const { data } = await HttpServer(accessToken).get(`/players/${playerId}`, {
+      cache: 'force-cache'
+    })
     return playerSchema.parse(data)
   } catch (err) {
     throw new Error('Failed to get Player Data')

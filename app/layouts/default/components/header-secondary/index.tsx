@@ -1,29 +1,29 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
-import {
-  PlayNowCard,
-  useActiveStyle,
-  useGameGroup,
-  useProviderGroup
-} from '@/layouts/default'
+import { useStyle } from '@/contexts'
+import { PlayNowCard, useProviderGroup } from '@/layouts/default'
+import { TGameGroupResponse } from '@/schemas/general'
 import { convertHex, extractStyle } from '@/utils'
 
 import { getGameIcons } from './data'
 import { PlayNowSkeleton } from './skeleton'
 
-export const HeaderSecondary = () => {
+type Props = {
+  gameGroup: TGameGroupResponse
+}
+
+export const HeaderSecondary: FC<Props> = ({ gameGroup }) => {
   const [gameGroupCode, setGameGroupCode] = useState<string>('')
-  const { data: gameGroupData } = useGameGroup()
-  const { data: styleData } = useActiveStyle()
+  const { styles: styleData } = useStyle()
   const categoryIcons = useMemo(() => getGameIcons({}), [])
   const { data: providerGroupData, isLoading: loadingProviderGroup } =
     useProviderGroup({
       code: gameGroupCode
     })
-  const styles = extractStyle(styleData?.data).get(
+  const styles = extractStyle(styleData).get(
     'desktop_homepage_gameCategoryContent'
   )
   return (
@@ -40,7 +40,7 @@ export const HeaderSecondary = () => {
         borderColor: styles?.category_list_background_border_color
       }}
     >
-      {gameGroupData?.data.map((menu) => (
+      {gameGroup?.data.map((menu) => (
         <Popover
           className="relative"
           key={menu.id}

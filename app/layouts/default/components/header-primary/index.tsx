@@ -1,18 +1,18 @@
 import { FC, PropsWithChildren } from 'react'
 
-import { useActiveStyle } from '@/layouts/default'
+import { useStyle } from '@/contexts'
 import { extractStyle } from '@/utils'
 
 export const HeaderPrimary: FC<PropsWithChildren> = ({ children }) => {
-  const { data } = useActiveStyle()
+  const { styles } = useStyle()
 
-  const style = extractStyle(data?.data).get('desktop_homepage_body')
+  const style = extractStyle(styles).get('desktop_homepage_body')
 
   return (
     <div
       className="sticky top-0 z-20 bg-cover bg-fixed bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url(${style.background_body_image})`
+        backgroundImage: `url(${style?.background_body_image})`
       }}
     >
       {children}

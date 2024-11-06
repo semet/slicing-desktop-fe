@@ -1,5 +1,6 @@
 import { FC, PropsWithChildren } from 'react'
 
+import { useStyle } from '@/contexts'
 import {
   FooterContainer,
   FooterLeft,
@@ -8,15 +9,14 @@ import {
   HeaderCenter,
   HeaderPrimary,
   HeaderSecondary,
-  HeaderTop,
-  useActiveStyle
+  HeaderTop
 } from '@/layouts/default'
 import { extractStyle } from '@/utils'
 
 export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { data } = useActiveStyle()
+  const { styles } = useStyle()
 
-  const style = extractStyle(data?.data).get('desktop_homepage_body')
+  const style = extractStyle(styles).get('desktop_homepage_body')
 
   return (
     <main

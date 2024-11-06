@@ -9,39 +9,40 @@ import { toast } from 'react-toastify'
 import { twMerge } from 'tailwind-merge'
 
 import { Checkbox, Input } from '@/components/ui'
-import { useActiveStyle, useGetCaptcha } from '@/layouts/default'
+import { useStyle } from '@/contexts'
+import { useGetCaptcha } from '@/layouts/default'
 import { loginSchema, TLoginForm } from '@/schemas/auth'
 import { extractStyle } from '@/utils'
 
 import css from './index.module.css'
 import { makeLoginButtonStyle } from './style'
 
-export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
+type Props = {
+  onCLose: () => void
+}
+
+export const LoginForm: FC<Props> = ({ onCLose }) => {
   const [passwordType, setPasswordType] = useState<'text' | 'password'>(
     'password'
   )
 
-  const { data } = useActiveStyle()
   const {
     data: captchaData,
-    refetch: reloadCaptcha,
-    isLoading: isCaptchaLoading,
-    isRefetching: isCaptchaRefetching
+    refetch: refetchCaptcha,
+    isLoading: isLoadingCaptcha,
+    isRefetching: isRefetchingCaptcha
   } = useGetCaptcha({
     action: 'login'
   })
 
-  const shouldDisableCaptcha =
-    Number(captchaData?.data?.remaining_refresh) < 1 ||
-    isCaptchaLoading ||
-    isCaptchaRefetching
-
+  const { styles } = useStyle()
   const formMethods = useForm<TLoginForm>({
     defaultValues: {
       username: '',
       password: '',
       captcha_solution: '',
-      captcha_id: captchaData?.data.captcha_id
+      remember: false,
+      captcha_id: captchaData?.data?.captcha_id
     },
     resolver: zodResolver(loginSchema)
   })
@@ -56,14 +57,14 @@ export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
-      reloadCaptcha()
+      // reloadCaptcha()
       toast.error(fetcher.data?.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetcher, fetcher.data?.success, fetcher.state])
   const onSubmit = handleSubmit((data) => {
     const payload = {
-      captcha_id: captchaData?.data.captcha_id,
+      captcha_id: data?.captcha_id,
       captcha_solution: data.captcha_solution,
       username: data.username,
       password: data.password,
@@ -74,8 +75,7 @@ export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
     formData.append(
       'data',
       JSON.stringify({
-        ...payload,
-        captcha_id: captchaData?.data.captcha_id
+        ...payload
       })
     )
     fetcher.submit(data, {
@@ -84,7 +84,7 @@ export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
     })
   })
 
-  const loginStylesRaw = extractStyle(data?.data).get('desktop_button_login')
+  const loginStylesRaw = extractStyle(styles).get('desktop_button_login')
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
   return (
     <FormProvider {...formMethods}>
@@ -128,24 +128,28 @@ export const LoginForm: FC<{ onCLose: () => void }> = ({ onCLose }) => {
             // disabled={shouldDisableCaptcha}
             rightNode={
               <div className="border-l pl-2">
-                <img
-                  src={captchaData?.data?.data}
-                  alt="captcha"
-                  className="h-full"
-                />
+                {isLoadingCaptcha || isRefetchingCaptcha ? (
+                  <div className="h-full w-24 animate-pulse bg-gray-300" />
+                ) : (
+                  <img
+                    src={captchaData?.data?.data}
+                    alt="captcha"
+                    className="h-full"
+                  />
+                )}
               </div>
             }
           />
           <button
             type="button"
-            onClick={() => reloadCaptcha()}
+            onClick={() => refetchCaptcha()}
             className="rounded-full bg-orange-600 p-[9px] disabled:cursor-not-allowed disabled:bg-orange-600/50"
-            disabled={shouldDisableCaptcha}
+            // disabled={shouldDisableCaptcha}
           >
             <RxReload
               className={twMerge([
-                'text-xl text-white',
-                isCaptchaRefetching ? 'animate-spin' : ''
+                'text-xl text-white'
+                // isCaptchaRefetching ? 'animate-spin' : ''
               ])}
             />
           </button>

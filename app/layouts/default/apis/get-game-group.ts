@@ -13,7 +13,8 @@ export const getGameGroupRequest = async (params: Params) => {
         page: 1,
         limit: 10,
         currency
-      }
+      },
+      cache: 'force-cache'
     })
     return gameGroupSchema.parse(data)
   } catch (err) {

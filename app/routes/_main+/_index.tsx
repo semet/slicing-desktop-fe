@@ -11,7 +11,6 @@ import {
   getBanks,
   getBannerCarousel,
   getFavoriteGames,
-  getPromotion,
   getProviders,
   PaymentMethodSkeleton,
   PaymentMethodsSection,
@@ -21,7 +20,6 @@ import {
   ProviderSkeleton,
   ProvidersSection
 } from '@/features/home'
-import { getPlayerRequest } from '@/features/player'
 import { ErrorWrapper } from '@/layouts/error'
 import { checkIfTokenExpires } from '@/libs/token'
 import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
@@ -39,11 +37,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const language = parseLanguageFromHeaders(headers)
   const accessToken = extractCookieFromHeaders(headers, 'token')
   const isTokenExpires = checkIfTokenExpires(accessToken)
-
   const isAuthenticated = accessToken && !isTokenExpires
-  const player = isAuthenticated
-    ? await getPlayerRequest({ accessToken })
-    : null
+
   const favoriteGames = isAuthenticated
     ? getFavoriteGames({ accessToken })
     : null
@@ -52,12 +47,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     language: language ?? 'id'
   })
   const banks = getBanks()
-  const promotions = getPromotion({
-    language: language ?? 'id',
-    currency:
-      player?.data?.account?.bank?.currency?.code.toLowerCase() || 'idr',
-    limit: 10
-  })
 
   const providers = getProviders()
 
@@ -67,7 +56,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       favoriteGames,
       isAuthenticated,
       banks,
-      promotions,
       providers
     },
     {
@@ -79,14 +67,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 const Home = () => {
-  const {
-    isAuthenticated,
-    bannersData,
-    favoriteGames,
-    banks,
-    promotions,
-    providers
-  } = useLoaderData<typeof loader>()
+  const { isAuthenticated, bannersData, favoriteGames, banks, providers } =
+    useLoaderData<typeof loader>()
 
   return (
     <div className="flex flex-col gap-10">
@@ -114,9 +96,7 @@ const Home = () => {
         </Await>
       </Suspense>
       <Suspense fallback={<PromotionSkeleton />}>
-        <Await resolve={promotions}>
-          {(promotions) => <PromotionSection promotions={promotions} />}
-        </Await>
+        <PromotionSection />
       </Suspense>
       <Suspense fallback={<ProviderSkeleton />}>
         <Await resolve={providers}>

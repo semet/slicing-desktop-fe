@@ -53,4 +53,5 @@ export const webSettingsSchema = z.object({
   })
 })
 
-export type TWebSettings = z.infer<typeof webSettingsSchema>
+export type TWebSettingResponse = z.infer<typeof webSettingsSchema>
+export type TWebSetting = TWebSettingResponse['data']

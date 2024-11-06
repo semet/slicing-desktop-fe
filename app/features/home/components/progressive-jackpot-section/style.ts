@@ -1,10 +1,10 @@
 import { CSSProperties } from 'react'
 
-import { DesktopStyle } from '@/schemas/general'
+import { TStyle } from '@/schemas/general'
 import { convertHex } from '@/utils'
 
 export const makeJackpotContainerStyles = (
-  styles?: DesktopStyle['desktop_homepage_progressiveJackpot']
+  styles?: TStyle['desktop_homepage_progressiveJackpot']
 ): CSSProperties => {
   return {
     '--jackpot-text-color': convertHex(styles?.jackpot_text_color).toRgb(),
