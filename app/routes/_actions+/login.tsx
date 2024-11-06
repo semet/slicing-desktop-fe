@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const password = body.get('password')
     const captcha_solution = body.get('captcha_solution')
     const captcha_id = body.get('captcha_id')
-    const remember = body.get('remember') === 'true' ? true : false
+    const remember = true
 
     const validated = loginSchema.safeParse({
       captcha_solution,
@@ -74,9 +74,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           token
         })
         const headers = new Headers()
-        headers.append('Set-Cookie', tokenCookie)
-        headers.append('Set-Cookie', token2Cookie)
-        headers.append('Set-Cookie', refreshTokenCookie)
+        headers.append('Set-Cookie', await tokenCookie)
+        headers.append('Set-Cookie', await token2Cookie)
+        headers.append('Set-Cookie', await refreshTokenCookie)
 
         // Return a JSON response
         return json({ success: true }, { headers })

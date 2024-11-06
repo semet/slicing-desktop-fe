@@ -1,26 +1,27 @@
 import { ActionFunctionArgs, json } from '@remix-run/node'
 import { XiorError } from 'xior'
 
+import { userCredentialKeys } from '@/configs/cookies'
 import HttpServer from '@/libs/http-server'
-import { extractCookieFromHeaders } from '@/utils'
+import { handleToken } from '@/libs/token'
+const { token, token2, refreshToken } = userCredentialKeys
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const headers = request.headers
-  const accessToken = extractCookieFromHeaders(headers, 'token')
+  const { accessToken } = await handleToken(request)
   try {
     const { data } = await HttpServer(accessToken).post('/logout')
     const responseHeaders = new Headers()
     responseHeaders.append(
       'Set-Cookie',
-      'token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
+      `${token}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
     )
     responseHeaders.append(
       'Set-Cookie',
-      'refreshToken=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
+      `${token2}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
     )
     responseHeaders.append(
       'Set-Cookie',
-      'token2=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0'
+      `${refreshToken}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
     )
 
     return json(

@@ -12,8 +12,8 @@ import {
 import { getPromotion } from '@/features/home'
 import { getPlayerRequest } from '@/features/player'
 import { getWebSettingsRequest } from '@/layouts/default'
-import { checkIfTokenExpires } from '@/libs/token'
-import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
+import { handleToken } from '@/libs/token'
+import { parseLanguageFromHeaders } from '@/utils'
 
 export const meta: MetaFunction = () => {
   return [
@@ -26,8 +26,7 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
-  const accessToken = extractCookieFromHeaders(headers, 'token')
-  const isTokenExpires = checkIfTokenExpires(accessToken)
+  const { isTokenExpires, accessToken } = await handleToken(request)
   const isAuthenticated = accessToken && !isTokenExpires
   if (!isAuthenticated) {
     return redirect('/')

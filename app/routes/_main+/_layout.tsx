@@ -21,15 +21,15 @@ import {
   HeaderTop
 } from '@/layouts/default'
 import { ErrorWrapper } from '@/layouts/error'
-import { checkIfTokenExpires } from '@/libs/token'
+import { handleToken } from '@/libs/token'
 import { TPlayerResponse } from '@/schemas/player'
-import { extractCookieFromHeaders, extractStyle } from '@/utils'
+import { extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const headers = request.headers
-  const accessToken = extractCookieFromHeaders(headers, 'token')
-  const isTokenExpires = checkIfTokenExpires(accessToken)
+  const { isTokenExpires, accessToken } = await handleToken(request)
+
   let playerData: TPlayerResponse | undefined
+
   const gameGroup = getGameGroupRequest({
     currency:
       playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
@@ -53,7 +53,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   if (!formAction) return false
 
   if (formActions.includes(formAction) && 'success' in actionResult) {
-    console.log('success in actionResult _layout')
     return defaultShouldRevalidate
   }
   return true

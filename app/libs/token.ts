@@ -1,5 +1,6 @@
 import { decodeJwt } from 'jose'
-import Cookies from 'js-cookie'
+
+import { refreshTokenCookie, token2Cookie, tokenCookie } from './cookie.server'
 
 export const generateTokenCookie = (params: {
   token: string
@@ -9,11 +10,12 @@ export const generateTokenCookie = (params: {
 
   const decodedToken = decodeJwt(token)
   const decodedTokenExp = decodedToken.exp
-
   const expirationDate =
     remember && decodedTokenExp ? new Date(decodedTokenExp * 1000) : undefined
 
-  return `token=${token}; Path=/; SameSite=Lax; Expires=${expirationDate}`
+  return tokenCookie.serialize(token, {
+    expires: expirationDate
+  })
 }
 
 export const generateToken2Cookie = (params: {
@@ -22,11 +24,12 @@ export const generateToken2Cookie = (params: {
 }) => {
   const { remember, token } = params
 
-  const oneYear = 365 * 24 * 60 * 60
-
+  const oneYear = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
   const expirationDate = remember ? oneYear : undefined
 
-  return `token2=${token}; Path=/; SameSite=Lax; Expires=${expirationDate}`
+  return token2Cookie.serialize(token, {
+    expires: expirationDate
+  })
 }
 
 export const generateRefreshTokenCookie = (params: {
@@ -41,7 +44,9 @@ export const generateRefreshTokenCookie = (params: {
   const expirationDate =
     remember && decodedTokenExp ? new Date(decodedTokenExp * 1000) : undefined
 
-  return `refreshToken=${token}; Path=/; SameSite=Lax; Expires=${expirationDate}`
+  return refreshTokenCookie.serialize(token, {
+    expires: expirationDate
+  })
 }
 
 export const checkIfTokenExpires = (token?: string): boolean => {
@@ -49,21 +54,23 @@ export const checkIfTokenExpires = (token?: string): boolean => {
   const decodedToken = decodeJwt(token)
   const decodedTokenExp = decodedToken.exp
 
-  if (!decodedTokenExp) return false
+  if (!decodedTokenExp) return true
 
   const now = new Date().getTime() / 1000
 
   return now > decodedTokenExp
 }
 
-export const withAccessToken = <P = object, T = unknown>(
-  fn: (params: P & { accessToken: string }) => Promise<T>
-) => {
-  return async (params: P): Promise<T> => {
-    const accessToken = Cookies.get('token')
-    if (!accessToken) {
-      throw new Error('Access token is missing')
-    }
-    return fn({ ...params, accessToken })
+export const handleToken = async (request: Request) => {
+  const headers = request.headers
+  const accessToken = await tokenCookie.parse(headers.get('Cookie'))
+  const token2 = await token2Cookie.parse(headers.get('Cookie'))
+  const refreshToken = await refreshTokenCookie.parse(headers.get('Cookie'))
+  const isTokenExpires = checkIfTokenExpires(accessToken)
+  return {
+    isTokenExpires,
+    accessToken,
+    refreshToken,
+    token2
   }
 }

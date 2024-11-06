@@ -1,5 +1,14 @@
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react'
-import { FC } from 'react'
+import {
+  isRouteErrorResponse,
+  useNavigate,
+  useRouteError
+} from '@remix-run/react'
+import Cookies from 'js-cookie'
+import { FC, useEffect } from 'react'
+
+import { userCredentialKeys } from '@/configs/cookies'
+
+const { token, token2, refreshToken } = userCredentialKeys
 
 type TProps = {
   title: string
@@ -7,6 +16,20 @@ type TProps = {
 
 export const ErrorWrapper: FC<TProps> = ({ title }) => {
   const error = useRouteError()
+  const navigate = useNavigate()
+  //TODO: Check error code and cause. if its Xior error and the status code is 401, then remove the cookies
+  // If not, just show the error message
+  useEffect(() => {
+    Cookies.remove(token)
+    Cookies.remove(token2)
+    Cookies.remove(refreshToken)
+    setTimeout(() => {
+      navigate('/', {
+        replace: true
+      })
+    }, 3000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
 
   return (
     <div
