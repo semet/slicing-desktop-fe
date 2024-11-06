@@ -58,7 +58,7 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
-      // reloadCaptcha()
+      refetchCaptcha()
       toast.error(fetcher.data?.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
