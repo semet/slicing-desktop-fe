@@ -2,6 +2,8 @@ import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import {
+  AccountIcon,
+  CoinPromotionIcon,
   GameCasino,
   GameCockFight,
   GameEsport,
@@ -9,7 +11,9 @@ import {
   GameGeneral,
   GameLottery,
   GameSlot,
-  GameSport
+  GameSport,
+  RecentTransactionIcon,
+  ReferralIcon
 } from '@/components/icons'
 import { ObjectIndex } from '@/types'
 
@@ -107,3 +111,33 @@ export const getGameIcons = (params: Params) => {
 
   return categoryIcons
 }
+
+export const getAuthenticatedOtherItems = () => [
+  {
+    id: 1,
+    label: 'Akun',
+    icon: AccountIcon,
+    link: '/profile'
+  },
+  {
+    id: 2,
+    label: 'Riwayat',
+    icon: RecentTransactionIcon,
+    link: '/history'
+  }
+]
+
+export const getOtherItems = () => [
+  {
+    id: 1,
+    label: 'Promosi',
+    icon: CoinPromotionIcon,
+    link: '/promotion'
+  },
+  {
+    id: 2,
+    label: 'Referral',
+    icon: ReferralIcon,
+    link: '/referral'
+  }
+]

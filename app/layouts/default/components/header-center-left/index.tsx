@@ -1,11 +1,14 @@
 import { Link } from '@remix-run/react'
+import { Suspense } from 'react'
 
 import { SidebarToggle } from '@/layouts/default'
 
 export const HeaderCenterLeft = () => {
   return (
     <div className="flex items-center gap-4">
-      <SidebarToggle />
+      <Suspense>
+        <SidebarToggle />
+      </Suspense>
       <Link to="/">
         <img
           src="/logo.gif"

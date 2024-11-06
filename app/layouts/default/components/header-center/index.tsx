@@ -22,7 +22,7 @@ export const HeaderCenter = () => {
               backgroundSize: '100% 100%'
             }
       }
-      className="flex flex-col justify-between px-4 py-4 md:flex-row lg:px-6"
+      className="flex flex-col justify-between bg-primary px-4 py-4 md:flex-row lg:px-6"
     >
       <HeaderCenterLeft />
       <HeaderCenterRight />

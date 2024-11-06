@@ -6,6 +6,7 @@ import {
 } from '@remix-run/react'
 import { Suspense } from 'react'
 
+import { useUser } from '@/contexts'
 import {
   BannerCarousel,
   BannerCarouselError,
@@ -14,7 +15,6 @@ import {
   FavoriteGameSkeleton,
   getBanks,
   getBannerCarousel,
-  getFavoriteGames,
   getProviders,
   PaymentMethodSkeleton,
   PaymentMethodsSection,
@@ -25,8 +25,7 @@ import {
   ProvidersSection
 } from '@/features/home'
 import { ErrorWrapper } from '@/layouts/error'
-import { checkIfTokenExpires } from '@/libs/token'
-import { extractCookieFromHeaders, parseLanguageFromHeaders } from '@/utils'
+import { parseLanguageFromHeaders } from '@/utils'
 
 export const meta: MetaFunction = () => {
   return [
@@ -39,12 +38,6 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const headers = request.headers
   const language = parseLanguageFromHeaders(headers)
-  const accessToken = extractCookieFromHeaders(headers, 'token')
-  const isTokenExpires = checkIfTokenExpires(accessToken)
-  const isAuthenticated = accessToken && !isTokenExpires
-  const favoriteGames = isAuthenticated
-    ? getFavoriteGames({ accessToken })
-    : null
 
   const bannersData = getBannerCarousel({
     language: language ?? 'id'
@@ -54,10 +47,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const providers = getProviders()
   return defer(
     {
-      bannersData,
-      favoriteGames,
-      isAuthenticated,
       banks,
+      bannersData,
       providers
     },
     {
@@ -76,14 +67,15 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   const formActions = ['/login', '/logout']
   if (!formAction) return false
 
-  if (formActions.includes(formAction) && 'success' in actionResult)
+  if (formActions.includes(formAction) && 'success' in actionResult) {
     return defaultShouldRevalidate
+  }
   return true
 }
 
 const Home = () => {
-  const { isAuthenticated, bannersData, favoriteGames, banks, providers } =
-    useLoaderData<typeof loader>()
+  const { bannersData, banks, providers } = useLoaderData<typeof loader>()
+  const { player, accessToken } = useUser()
 
   return (
     <div className="flex flex-col gap-10">
@@ -98,11 +90,9 @@ const Home = () => {
 
       <ProgressiveJackpotSection />
 
-      {isAuthenticated && (
+      {accessToken && player !== undefined && (
         <Suspense fallback={<FavoriteGameSkeleton />}>
-          <Await resolve={favoriteGames}>
-            {(favoriteGames) => <FavoriteGameSection games={favoriteGames} />}
-          </Await>
+          <FavoriteGameSection />
         </Suspense>
       )}
       <Suspense fallback={<PaymentMethodSkeleton />}>

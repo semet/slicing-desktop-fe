@@ -1,11 +1,10 @@
 import { FC } from 'react'
 
-import { GameCard } from '@/features/home'
+import { GameCard, useGetFavoriteGames } from '@/features/home'
 import { TFavoriteGames } from '@/schemas/home'
 
-export const FavoriteGameSection: FC<{ games: TFavoriteGames | null }> = ({
-  games
-}) => {
+export const FavoriteGameSection = () => {
+  const { data: games } = useGetFavoriteGames()
   return (
     <div className="flex flex-col items-center gap-6 px-4 xl:px-24">
       <h2 className="text-center text-lg font-semibold uppercase text-white">

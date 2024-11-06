@@ -1,14 +1,20 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import Cookie from 'js-cookie'
 
+import { useUser } from '@/contexts'
 import { homeKeys } from '@/factories/home'
 import { getFavoriteGames } from '@/features/home'
 
 export const useGetFavoriteGames = () => {
-  const token = Cookie.get('token')
+  const { accessToken } = useUser()
   return useSuspenseQuery({
-    queryKey: homeKeys.favoriteGames,
-    queryFn: () => getFavoriteGames({ accessToken: token })
+    queryKey: homeKeys.favoriteGames(accessToken),
+    queryFn: () => {
+      if (accessToken) {
+        return getFavoriteGames({ accessToken })
+      } else {
+        return Promise.resolve(null)
+      }
+    }
     // enabled: !!token
   })
 }

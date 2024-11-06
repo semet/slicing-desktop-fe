@@ -4,11 +4,10 @@ import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
 import { useStyle } from '@/contexts'
-import { PlayNowCard, useProviderGroup } from '@/layouts/default'
+import { getGameIcons, PlayNowCard, useProviderGroup } from '@/layouts/default'
 import { TGameGroupResponse } from '@/schemas/general'
 import { convertHex, extractStyle } from '@/utils'
 
-import { getGameIcons } from './data'
 import { PlayNowSkeleton } from './skeleton'
 
 type Props = {

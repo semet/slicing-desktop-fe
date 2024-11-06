@@ -52,8 +52,10 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   const formActions = ['/login', '/logout']
   if (!formAction) return false
 
-  if (formActions.includes(formAction) && 'success' in actionResult)
+  if (formActions.includes(formAction) && 'success' in actionResult) {
+    console.log('success in actionResult _layout')
     return defaultShouldRevalidate
+  }
   return true
 }
 

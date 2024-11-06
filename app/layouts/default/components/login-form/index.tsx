@@ -53,6 +53,7 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
   const navigate = useNavigate()
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data?.success) {
+      fetcher.load('/')
       navigate('.', { replace: true })
       onCLose()
     }
