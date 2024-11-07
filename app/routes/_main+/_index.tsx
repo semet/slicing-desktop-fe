@@ -70,7 +70,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   if (formActions.includes(formAction) && 'success' in actionResult) {
     return defaultShouldRevalidate
   }
-  return true
+  return false
 }
 
 const Home = () => {

@@ -15,7 +15,8 @@ export const getProviderGroupRequest = async (params: Params) => {
         code,
         status: 1,
         provider_name
-      }
+      },
+      cache: 'force-cache'
     })
     return providerGroupSchema.parse(data)
   } catch (err) {

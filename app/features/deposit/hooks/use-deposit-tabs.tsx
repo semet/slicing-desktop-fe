@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, Suspense, useMemo } from 'react'
 
 import {
   DpBankIcon,
@@ -8,28 +8,16 @@ import {
   DpQrisIcon,
   DpVaIcon
 } from '@/components/icons'
-import { useLayout } from '@/contexts'
+import { useLayout, useUser } from '@/contexts'
 import {
   DepositBankForm,
   DepositCryptoForm,
   DepositQrisForm,
-  DepositVaForm
+  DepositVaForm,
+  useGetBankByCurrency,
+  useGetCompanyBankAccounts
 } from '@/features/deposit'
-import {
-  TBankByCurrencyResponse,
-  TBanksByCurrency,
-  TCompanyBank,
-  TCompanyBanksResponse
-} from '@/schemas/deposit'
-import { TPromotionResponse } from '@/schemas/home'
-import { TPlayerResponse } from '@/schemas/player'
-
-type Params = {
-  bankByCurrency: TBankByCurrencyResponse
-  companyBankAccounts: TCompanyBanksResponse
-  player: TPlayerResponse
-  promotions: TPromotionResponse
-}
+import { TBanksByCurrency, TCompanyBank } from '@/schemas/deposit'
 
 export type TabItem = {
   id: number
@@ -38,9 +26,19 @@ export type TabItem = {
   content: ReactNode
 }
 
-export const useDepositTabs = (params: Params) => {
-  const { bankByCurrency, companyBankAccounts, player, promotions } = params
+export const useDepositTabs = () => {
   const { webSettings } = useLayout()
+  const { player, accessToken } = useUser()
+  const { data: bankByCurrency, isLoading: isLoadingBank } =
+    useGetBankByCurrency({
+      currencyId: player?.account?.bank?.currency_id,
+      accessToken
+    })
+
+  const { data: companyBankAccounts, isLoading: isLoadingAccounts } =
+    useGetCompanyBankAccounts({
+      accessToken
+    })
 
   const groupedBanks = useMemo(() => {
     return bankByCurrency?.data
@@ -90,14 +88,14 @@ export const useDepositTabs = (params: Params) => {
         label: 'Bank Transfer',
         icon: <DpBankIcon />,
         content: (
-          <DepositBankForm
-            player={player.data}
-            banks={groupedBanks?.BANK}
-            companyBanks={groupedCompanyBanks?.BANK}
-            key="BANK"
-            category="BANK"
-            promotions={promotions.data}
-          />
+          <Suspense>
+            <DepositBankForm
+              banks={groupedBanks?.BANK}
+              companyBanks={groupedCompanyBanks?.BANK}
+              key="BANK"
+              category="BANK"
+            />
+          </Suspense>
         )
       })
     }
@@ -111,12 +109,7 @@ export const useDepositTabs = (params: Params) => {
         id: 2,
         label: 'QRIS',
         icon: <DpQrisIcon />,
-        content: (
-          <DepositQrisForm
-            player={player.data}
-            companyBanks={groupedCompanyBanks?.QRIS}
-          />
-        )
+        content: <DepositQrisForm companyBanks={groupedCompanyBanks?.QRIS} />
       })
     }
 
@@ -131,7 +124,6 @@ export const useDepositTabs = (params: Params) => {
         icon: <DpVaIcon />,
         content: (
           <DepositVaForm
-            player={player.data}
             companyBanks={groupedCompanyBanks?.VA}
             key="VA"
           />
@@ -150,12 +142,10 @@ export const useDepositTabs = (params: Params) => {
         icon: <DpEwalletIcon />,
         content: (
           <DepositBankForm
-            player={player.data}
             banks={groupedBanks?.EWALLET}
             companyBanks={groupedCompanyBanks?.EWALLET}
             key="EWALLET"
             category="EWALLET"
-            promotions={promotions.data}
           />
         )
       })
@@ -172,12 +162,10 @@ export const useDepositTabs = (params: Params) => {
         icon: <DpPulsaIcon />,
         content: (
           <DepositBankForm
-            player={player.data}
             banks={groupedBanks?.PULSA}
             companyBanks={groupedCompanyBanks?.PULSA}
             key="PULSA"
             category="PULSA"
-            promotions={promotions.data}
           />
         )
       })
@@ -194,7 +182,6 @@ export const useDepositTabs = (params: Params) => {
         icon: <DpCryptoIcon />,
         content: (
           <DepositCryptoForm
-            player={player.data}
             banks={groupedBanks?.CRYPTO}
             companyBanks={groupedCompanyBanks?.CRYPTO}
             key="CRYPTO"
@@ -204,12 +191,13 @@ export const useDepositTabs = (params: Params) => {
     }
 
     return items
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webSettings, groupedBanks, groupedCompanyBanks])
 
   return {
     tabItems,
     groupedBanks,
-    groupedCompanyBanks
+    groupedCompanyBanks,
+    isLoadingBank,
+    isLoadingAccounts
   }
 }

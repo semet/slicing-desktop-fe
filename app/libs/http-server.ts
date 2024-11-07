@@ -26,6 +26,9 @@ const HttpServer = (token?: string) => {
       return response
     },
     (error) => {
+      if (typeof window !== 'undefined' && error?.response?.status === 401) {
+        window.location.href = '/'
+      }
       return Promise.reject(error)
     }
   )

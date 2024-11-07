@@ -1,36 +1,38 @@
 import { useFetcher } from '@remix-run/react'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { Input, Select } from '@/components/ui'
+import { useLayout, useUser } from '@/contexts'
 import { PromotionPopup } from '@/features/deposit'
+import { useGetPromotion } from '@/features/home'
 import {
   TBanksByCurrency,
   TCompanyBank,
   TCreateDeposit
 } from '@/schemas/deposit'
 import { TPromotion } from '@/schemas/home'
-import { TPlayer } from '@/schemas/player'
 
 type TProps = {
   banks: TBanksByCurrency[]
   companyBanks: TCompanyBank[]
   category: string
-  player: TPlayer
-  promotions: TPromotion[]
 }
 
-export const DepositBankForm: FC<TProps> = ({
-  banks,
-  companyBanks,
-  promotions,
-  player
-}) => {
+export const DepositBankForm: FC<TProps> = ({ banks, companyBanks }) => {
   const fetcher = useFetcher()
+  const { webSettings, language } = useLayout()
+  const { player } = useUser()
+  const { data: promotions } = useGetPromotion({
+    currency: player?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr',
+    language: language ?? 'en',
+    bonus: true,
+    showCental: webSettings?.show_promotion?.value === 'true' ? 'true' : 'false'
+  })
   const formMethods = useForm<TCreateDeposit>({
     defaultValues: {
       transaction_category_id: 2,
-      player_id: player.id,
+      player_id: player?.id,
       deposit_type: 'bank_transfer',
       bank: {
         label: '',
@@ -47,24 +49,34 @@ export const DepositBankForm: FC<TProps> = ({
   const onChangePromotion = (data: TPromotion | null) => {
     setValue('bonus_id', data ? data.id : null)
   }
-  const selectedPromotion = promotions.find(
+  const selectedPromotion = promotions?.data?.find(
     (promo) => promo.id === watch('bonus_id')
   )
 
-  const bankOptions = banks
-    .filter((bank) =>
-      companyBanks.map((companyBank) => companyBank.bank_id).includes(bank.id)
-    )
-    .map((bank) => ({
-      label: bank.name,
-      value: bank.id
-    }))
-  const filteredCompanyBanks = companyBanks
-    .filter((companyBank) => companyBank.bank_id === watchedBank.value)
-    ?.map((companyBank) => ({
-      label: companyBank.account_name,
-      value: companyBank.id
-    }))
+  const bankOptions = useMemo(
+    () =>
+      banks
+        .filter((bank) =>
+          companyBanks
+            .map((companyBank) => companyBank.bank_id)
+            .includes(bank.id)
+        )
+        .map((bank) => ({
+          label: bank.name,
+          value: bank.id
+        })),
+    [banks, companyBanks]
+  )
+  const filteredCompanyBanks = useMemo(
+    () =>
+      companyBanks
+        .filter((companyBank) => companyBank.bank_id === watchedBank.value)
+        ?.map((companyBank) => ({
+          label: companyBank.account_name,
+          value: companyBank.id
+        })),
+    [companyBanks, watchedBank.value]
+  )
 
   return (
     <FormProvider {...formMethods}>
@@ -78,7 +90,7 @@ export const DepositBankForm: FC<TProps> = ({
             </div>
             <PromotionPopup
               onChange={onChangePromotion}
-              promotions={promotions}
+              promotions={promotions?.data}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">

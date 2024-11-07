@@ -3,12 +3,11 @@ import { bankByCurrencySchema } from '@/schemas/deposit'
 import { TParamsWithToken } from '@/types'
 
 type Params = TParamsWithToken<{
-  currencyId: string
+  currencyId?: string
 }>
 
 export const getBankByCurrencyRequest = async (params: Params) => {
   const { accessToken, currencyId } = params
-
   try {
     const { data } = await HttpServer(accessToken).get(
       `/banks/currency/${currencyId}`

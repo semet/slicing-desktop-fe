@@ -3,7 +3,9 @@ import { banksSchema } from '@/schemas/home'
 
 export const getBanks = async () => {
   try {
-    const { data } = await HttpServer().get('/banks')
+    const { data } = await HttpServer().get('/banks', {
+      cache: 'force-cache'
+    })
     return banksSchema.parse(data)
   } catch (err) {
     throw new Error('Failed to fetch payment methods')

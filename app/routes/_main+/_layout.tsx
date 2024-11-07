@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, defer } from '@remix-run/node'
+import { defer, LoaderFunctionArgs } from '@remix-run/node'
 import {
   Await,
   Outlet,
@@ -23,25 +23,29 @@ import {
 import { ErrorWrapper } from '@/layouts/error'
 import { handleToken } from '@/libs/token'
 import { TPlayerResponse } from '@/schemas/player'
-import { extractStyle } from '@/utils'
+import { catchLoaderError, extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { isTokenExpires, accessToken } = await handleToken(request)
 
-  let playerData: TPlayerResponse | undefined
+  try {
+    let playerData: TPlayerResponse | undefined
 
-  const gameGroup = getGameGroupRequest({
-    currency:
-      playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
-  })
-  if (accessToken && !isTokenExpires) {
-    playerData = await getPlayerRequest({ accessToken })
+    const gameGroup = getGameGroupRequest({
+      currency:
+        playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
+    })
+    if (accessToken && !isTokenExpires) {
+      playerData = await getPlayerRequest({ accessToken })
+    }
+    return defer({
+      accessToken,
+      gameGroup,
+      player: playerData?.data
+    })
+  } catch (err) {
+    return catchLoaderError(err)
   }
-  return defer({
-    accessToken,
-    gameGroup,
-    player: playerData?.data
-  })
 }
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
